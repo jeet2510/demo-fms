@@ -41,7 +41,7 @@
                 readonly="" value="">
         </div>
     </div>
-    <div class="p-5 mt-5 mb-5">
+    <div class="mt-5 mb-5">
         <table class="min-w-full bg-white border border-gray-200">
             <thead>
                 <tr class="bg-gray-100">

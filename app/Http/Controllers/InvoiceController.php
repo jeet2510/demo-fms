@@ -11,6 +11,7 @@ use App\Models\Document;
 use App\Models\Driver;
 use App\Models\Invoice;
 use App\Models\Transaction;
+use App\Models\Tracking;
 use App\Models\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,31 @@ use Illuminate\Support\Facades\View;
 
 class InvoiceController extends Controller
 {
+    public function index(Request $request)
+    {
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
+
+        $customers = Customer::where('created_by', Auth::user()->creatorId())->get();
+        $transporters = Transporter::where('created_by', Auth::user()->creatorId())->get();
+        $routes = Route::where('created_by', Auth::user()->creatorId())->get();
+        $clients = Client::where('created_by', Auth::user()->creatorId())->get();
+        $drivers = Driver::where('created_by', Auth::user()->creatorId())->get();
+        // $bookings = Booking::where('created_by', Auth::user()->creatorId())->with('invoice')->get();
+        $bookingsQuery = Booking::where('created_by', Auth::user()->creatorId())->has('invoice')->latest();
+        if ($dateFrom !== null && $dateTo !== null) {
+            $bookingsQuery->whereHas('invoice', function ($query) use ($dateFrom, $dateTo) {
+                $query->whereBetween('date', [$dateFrom, $dateTo]);
+            });
+        }
+        $bookings = $bookingsQuery->paginate(25);
+        $trackings = Tracking::where('created_by', Auth::user()->creatorId())->get();
+        $transactions = Transaction::where('created_by', Auth::user()->creatorId())->get();
+
+
+        return view('invoices.index', compact('customers', 'transporters','routes', 'clients', 'drivers', 'bookings', 'trackings', 'transactions'));
+    }
+
     public function invoiceStore(Request $request)
     {
 

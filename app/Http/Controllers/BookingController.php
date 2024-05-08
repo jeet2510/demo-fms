@@ -24,14 +24,23 @@ class BookingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
+
         $customers = Customer::where('created_by', Auth::user()->creatorId())->get();
         $transporters = Transporter::where('created_by', Auth::user()->creatorId())->get();
         $routes = Route::where('created_by', Auth::user()->creatorId())->get();
         $clients = Client::where('created_by', Auth::user()->creatorId())->get();
         $drivers = Driver::where('created_by', Auth::user()->creatorId())->get();
-        $bookings = Booking::where('created_by', Auth::user()->creatorId())->with('invoice')->get();
+        // $bookings = Booking::where('created_by', Auth::user()->creatorId())->with('invoice')->get();
+        $bookings = Booking::where('created_by', Auth::user()->creatorId())
+                    ->doesnthave('invoice');
+        if ($dateFrom !== null && $dateTo !== null) {
+            $bookings->whereBetween('date', [$dateFrom, $dateTo]);
+        }
+        $bookings = $bookings->latest()->paginate(25);
         $trackings = Tracking::where('created_by', Auth::user()->creatorId())->get();
         $transactions = Transaction::where('created_by', Auth::user()->creatorId())->get();
 

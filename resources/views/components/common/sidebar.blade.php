@@ -346,7 +346,7 @@
                             </li>
                         </ul>
                     </li>
- <li class="menu nav-item">
+                    <li class="menu nav-item">
                         <button type="button" class="nav-link group"
                             :class="{ 'active': activeDropdown === 'transporter' }"
                             @click="activeDropdown === 'transporter' ? activeDropdown = null : activeDropdown = 'transporter'">
@@ -379,7 +379,8 @@
                                 </svg>
                             </div>
                         </button>
-                        <ul x-cloak x-show="activeDropdown === 'transporter'" x-collapse class="sub-menu text-gray-500">
+                        <ul x-cloak x-show="activeDropdown === 'transporter'" x-collapse
+                            class="sub-menu text-gray-500">
                             <li>
                                 <a href="/transporters">Transporter</a>
                             </li>
@@ -506,6 +507,9 @@
                             <li>
                                 <a href="/bookings">Booking</a>
                             </li>
+                            <li>
+                                <a href="/invoices">Invoice</a>
+                            </li>
                         </ul>
                     </li>
 
@@ -585,8 +589,7 @@
                                 </svg>
                             </div>
                         </button>
-                        <ul x-cloak x-show="activeDropdown === 'report'" x-collapse
-                            class="sub-menu text-gray-500">
+                        <ul x-cloak x-show="activeDropdown === 'report'" x-collapse class="sub-menu text-gray-500">
                             <li>
                                 <a href="{{ route('reports.bookingIndex') }}">Booking Report</a>
                             </li>

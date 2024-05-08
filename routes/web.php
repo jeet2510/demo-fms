@@ -122,7 +122,7 @@ Route::put('/documents/{id}', [DriverController::class, 'updateDocuments'])->nam
 Route::post('/bookings/store-tracking', [BookingController::class, 'storeTracking'])->name('bookings.storeTracking');
 Route::post('/bookings/store-document', [BookingController::class, 'storeDocument'])->name('bookings.storeDocument');
 
-
+Route::get('/invoices', InvoiceController::class .'@index')->name('invoices.index');
 Route::put('/invoices/{invoice}', InvoiceController::class .'@update')->name('invoices.update');
 Route::get('/get-driver-details/{id}', 'App\Http\Controllers\InvoiceController@getDriverDetails');
 // Route::put('/documents/{id}', [InvoiceController::class, 'updateDocuments'])->name('documents.update');

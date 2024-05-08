@@ -66,7 +66,7 @@
         <div class="col-md-8">
 
 
-            <form action="{{ route('bookings.index') }}" method="GET">
+            <form action="{{ route('invoices.index') }}" method="GET">
                 <div class="row mb-3 flex">
                     <div class="col-md-3 flex-inline">
                         <label for="date_from">{{ __('From Date') }}</label>
@@ -82,10 +82,10 @@
                         <button class="btn btn-primary" type="submit" id="filterBtn">{{ __('Filter') }}</button>
                     </div>
             </form>
-            <div class="col-md-3 mt-7 text-right" style="margin-left: 30rem;">
+            {{-- <div class="col-md-3 mt-7 text-right" style="margin-left: 30rem;">
                 <a href="/bookings/create" id="bookingCreateLink" class="btn btn-primary"
                     style="width: 125px; float:right; margin-bottom: 8px;">Create Booking</a>
-            </div>
+            </div> --}}
         </div>
     </div>
 
@@ -230,7 +230,7 @@
                         <td class="p-2">{{ $index + 1 }}</td>
                         <td>{{ optional($booking->customer)->company_name }}</td>
                         <td class="p-2">{{ $booking->booking_id }}</td>
-                        <td class="p-2">{{ $booking->date }}</td>
+                        <td class="p-2">{{ $booking->invoice->date }}</td>
                         <td class="p-2">{{ optional($booking->route)->route }}</td>
                         <td class="p-2">{!! $booking->getDriverCount() !!}</td>
                         <td class="p-2">
@@ -281,36 +281,9 @@
                         @endforeach
                     </th>
                     <td class="p-2">
-                        @if (!$booking->invoice)
-                            <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-primary"
-                                style="width: 50px; display: inline-block;">Edit</a>
-                        @else
-                            <a href="{{ route('bookings.edit', $booking->id) }}" class="btn btn-primary"
-                                style="width: 50px; display: inline-block;" onclick="return false;"
-                                disabled>Edit</a>
-                        @endif
 
-
-
-                        @if (!$booking->invoice)
-                            <form action="{{ route('bookings.destroy', $booking->id) }}" method="post"
-                                class="inline" style="display: inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger"
-                                    style="width: 50px;">Delete</button>
-                            </form>
-                        @else
-                            <form action="{{ route('bookings.destroy', $booking->id) }}" method="post"
-                                class="inline" style="display: inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger" style="width: 50px;"
-                                    disabled>Delete</button>
-                            </form>
-                        @endif
                         <a href="{{ route('bookings.show', $booking->id) }}" class="btn btn-primary"
-                            style="width: 60px; display: inline-block;">Show</a>
+                            style="width: 120px; display: inline-block;">Booking Show</a>
                     </td>
                     <td class="p-2">
                         <button class="idcard_upload-button btn btn-primary" style="width: 70px; display:"
