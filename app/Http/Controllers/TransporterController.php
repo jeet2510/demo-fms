@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Transporter;
+use App\Models\Booking;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
@@ -117,4 +118,9 @@ class TransporterController extends Controller
     $transporter = transporter::find($id);
     return view('transporters.edit', compact('transporter'));
   }
+  public function getBookingDriverWiseTransporter(Request $request, $transporter_id)
+    {
+        $transporter_name = Transporter::find($transporter_id)->transporter_name;
+        return response()->json($transporter_name);
+    }
 }

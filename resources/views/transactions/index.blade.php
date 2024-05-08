@@ -61,7 +61,7 @@
             <div class="fixed inset-0 bg-[black]/60 z-[999] hidden" :class="open && '!block'" style="overflow-y: auto;">
                 <div class="flex items-start justify-center min-h-screen px-4" @click.self="open = false">
                     <div x-show="open" x-transition x-transition.duration.300
-                        class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-5xl my-8">
+                        class="panel border-0 p-0 rounded-lg overflow-hidden w-full my-8" style="max-width: 70%;">
                         <div class="flex bg-[#fbfbfb] dark:bg-[#121c2c] items-center justify-between px-5 py-3">
                             <h5 class="font-bold text-lg">Add Transactions</h5>
                             <button type="button" class="text-white-dark hover:text-dark" @click="toggle">

@@ -28,7 +28,7 @@ class TransactionController extends Controller
         $clients = Client::where('created_by', Auth::user()->creatorId())->get();
         $drivers = Driver::where('created_by', Auth::user()->creatorId())->get();
         // $bookings = Booking::where('created_by', Auth::user()->creatorId())->get();
-        $bookings = Booking::with(['transactions' => function ($query) {
+        $bookings = Booking::where('paid_status', 0)->with(['transactions' => function ($query) {
             $query->latest()->limit(1);
         }, 'invoice'])->get();
         $transactions = Transaction::where('created_by', Auth::user()->creatorId())->get();
@@ -118,7 +118,22 @@ public function store(Request $request)
 
     // Save the transaction to the database
     $transaction->save();
+    $total_paid = 0;
+    $total_amount = 0;
 
+    foreach (explode(',', $transaction->paid_amount) as $pd) {
+        $total_paid += (float) $pd;
+    }
+
+    foreach (explode(',', $transaction->semi_total_booking_amount) as $stb) {
+        $total_amount += (float) $stb;
+    }
+
+    if ($total_paid == $total_amount) {
+        $booking = Booking::find($transaction->booking_id);
+        $booking->paid_status = 1;
+        $booking->save();
+    }
     // Redirect to a success page or return a success response
     return redirect()->route('transactions.index')->with('success', 'Transaction saved successfully.');
 }

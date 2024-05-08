@@ -22,6 +22,7 @@ use App\Http\Controllers\ReportController;
 
 Route::view('/', 'auth.login');
 
+Route::middleware(['auth'])->group(function () {
 
 Route::get('/country', CountryController::class .'@index')->name('countries.index');
 Route::get('/countries/create', CountryController::class . '@create')->name('countries.create');
@@ -178,6 +179,14 @@ Route::get('/generate-driverreport', [ReportController::class, 'generateDriverRe
 Route::get('/generate-report', [ReportController::class, 'generateReport'])->name('generate.report');
 
 
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/logout', function(){
+    Auth::logout();
+    return redirect('/login');
+});
+});
+
+Route::get('/get-booking-driver-wise-transporter/{transporter_id}', [TransporterController::class,'getBookingDriverWiseTransporter']);
 
 
 Auth::routes();
@@ -188,7 +197,6 @@ Route::post('/admin',[LoginController::class,'adminLogin'])->name('admin.login')
 Route::get('/admin/register',[RegisterController::class,'showAdminRegisterForm'])->name('admin.register-view');
 Route::post('/admin/register',[RegisterController::class,'createAdmin'])->name('admin.register');
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/admin/dashboard',function(){
     return view('admin');

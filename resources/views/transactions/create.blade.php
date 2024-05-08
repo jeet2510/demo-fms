@@ -46,6 +46,7 @@
             <thead>
                 <tr class="bg-gray-100">
                     <th class="py-2 px-4 border-b border-gray-200">Name</th>
+                    <th class="py-2 px-4 border-b border-gray-200">Transporter Name</th>
                     <th class="py-2 px-4 border-b border-gray-200">Buying Amount</th>
                     <th class="py-2 px-4 border-b border-gray-200">Border Charges</th>
                     <th class="py-2 px-4 border-b border-gray-200">Waiting Amount</th>
@@ -100,6 +101,18 @@
     }
 </script>
 <script>
+    async function getBookingDriverTransporters(transporter_id) {
+        try {
+            let response = await $.ajax({
+                url: '/get-booking-driver-wise-transporter/' + transporter_id,
+                type: 'GET'
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
 
         const bookings = {!! json_encode($bookings) !!};
@@ -110,19 +123,17 @@
 
         const bookingIdSelect = document.getElementById('booking_id');
 
-        bookingIdSelect.addEventListener('change', function() {
+        bookingIdSelect.addEventListener('change', async function() {
             const selectedBookingId = this.value;
-
             var selectedBooking = bookings.find(booking => booking.id === parseInt(
                 selectedBookingId));
+            const transporterIds = selectedBooking.transporter_id;
+
             const amounts = selectedBooking.transactions[0]?.paid_amount || 0;
             if (selectedBooking.invoice != null) {
-                selectedBooking = selectedBooking.invoice
+                selectedBooking = selectedBooking.invoice;
             }
-            console.log(selectedBooking);
-
             if (selectedBooking) {
-
                 const routeId = parseInt(selectedBooking.route_id);
                 const route = routes.find(route => route.id === routeId);
 
@@ -138,6 +149,7 @@
 
                 driversTableBody.innerHTML = '';
                 const driverIds = selectedBooking.driver_id.split(',');
+
                 const selectedDrivers = [];
 
                 driverIds.forEach(driverId => {
@@ -166,21 +178,38 @@
                     paidAmount = ['0'];
                 }
 
-
-                selectedDrivers.forEach((driver, index) => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                <td class="border p-1" style="width:12px !important">${driver.driver_name}<input type="hidden" name="driver_id[]" value="${driver.id}"></td>
-                <td class="border p-1" style="width:12px !important"><input type="number" step="0.01"  name="semi_buying_amount[]" onchange="recalculateTotal()" class="semi_buying_amount form-input mt-1 block w-full min-w-10" value="${buyingAmounts[index] || 0}" readonly></td>
-                <td class="border p-1" style="width:12px !important"><input type="number" step="0.01"  name="semi_border_charges[]" onchange="recalculateTotal()" class="semi_border_charges form-input mt-1 block w-full min-w-10" value="${borderCharges[index] || 0}" readonly></td>
-                <td class="border p-1" style="width:12px !important"><input type="number" step="0.01"  name="semi_waiting_amount[]" onchange="recalculateTotal()" class="semi_waitining_amount form-input mt-1 block w-full min-w-10" value="${waitingAmounts[index] || 0}" readonly></td>
-                <td class="border p-1" style="width:12px !important"><input type="number" step="0.01"  onchange="recalculateTotal()" name="semi_total_booking_amount[]" class="semi_total_booking_amount form-input mt-1 block w-full min-w-10" value="${totalBookingAmounts[index] || 0}" readonly></td>
-                <td class="border p-1" style="width:12px !important"><input type="number" step="0.01"  name="paid_amount[]" class="paid_amount form-input mt-1 block w-full min-w-10" value="${paidAmount[index] || 0}" readonly readonly></td>
-                <td class="border p-1" style="width:12px !important"><input type="number" step="0.01"  name="balance_amount[]" class="balance_amount form-input mt-1 block w-full min-w-10" value="${parseFloat(totalBookingAmounts[index] || 0) - parseFloat(paidAmount[index] || 0)}" readonly></td>
-                <td class="border p-1" style="width:12px !important"><input type="number" step="0.01"  name="amount[]" class="amount form-input mt-1 block w-full min-w-10" value="0" onchange="removeCommas(this.value)" required></td>
-            `;
-                    driversTableBody.appendChild(row);
-                });
+                const extractedIds = transporterIds.match(/\d+/g);
+                const transporterIdArray = extractedIds.map(id => parseInt(id));
+                console.log(transporterIdArray);
+                const promises = [];
+                for (let [index, driver] of selectedDrivers.entries()) {
+                    console.log(driver);
+                    const transporterId = transporterIdArray[index];
+                    console.log(`Driver: ${driver.id}, Transporter ID: ${transporterId}`);
+                    promises.push(getBookingDriverTransporters(transporterId).then(
+                        transporter_name => {
+                            console.log(transporter_name);
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+            <td class="border p-1" style="width:12px !important">${driver.driver_name}<input type="hidden" name="driver_id[]" value="${driver.id}"></td>
+            <td class="border p-1" style="width:12px !important">${transporter_name}</td>
+            <td class="border p-1" style="width:12px !important"><input type="number" step="0.01"  name="semi_buying_amount[]" onchange="recalculateTotal()" class="semi_buying_amount form-input mt-1 block w-full min-w-10" value="${buyingAmounts[index] || 0}" readonly></td>
+            <td class="border p-1" style="width:12px !important"><input type="number" step="0.01"  name="semi_border_charges[]" onchange="recalculateTotal()" class="semi_border_charges form-input mt-1 block w-full min-w-10" value="${borderCharges[index] || 0}" readonly></td>
+            <td class="border p-1" style="width:12px !important"><input type="number" step="0.01"  name="semi_waiting_amount[]" onchange="recalculateTotal()" class="semi_waitining_amount form-input mt-1 block w-full min-w-10" value="${waitingAmounts[index] || 0}" readonly></td>
+            <td class="border p-1" style="width:12px !important"><input type="number" step="0.01"  onchange="recalculateTotal()" name="semi_total_booking_amount[]" class="semi_total_booking_amount form-input mt-1 block w-full min-w-10" value="${totalBookingAmounts[index] || 0}" readonly></td>
+            <td class="border p-1" style="width:12px !important"><input type="number" step="0.01"  name="paid_amount[]" class="paid_amount form-input mt-1 block w-full min-w-10" value="${paidAmount[index] || 0}" readonly readonly></td>
+            <td class="border p-1" style="width:12px !important"><input type="number" step="0.01"  name="balance_amount[]" class="balance_amount form-input mt-1 block w-full min-w-10" value="${parseFloat(totalBookingAmounts[index] || 0) - parseFloat(paidAmount[index] || 0)}" readonly></td>
+            <td class="border p-1" style="width:12px !important">
+                <input type="number" step="0.01"  name="amount[]" class="amount form-input mt-1 block w-full min-w-10" value="0" onchange="removeCommas(this.value); functionCall(this)" required>
+                <span class="amount-error" style="color: red;"></span>
+            </td>
+        `;
+                            driversTableBody.appendChild(row);
+                        }).catch(error => {
+                        console.error(error);
+                    }));
+                }
+                await Promise.all(promises);
             } else {
 
                 document.getElementById('date').value = '';
@@ -190,7 +219,22 @@
                 driversTableBody.innerHTML = '';
             }
         });
+
     });
+
+    function functionCall(inputField) {
+        const row = inputField.closest('tr');
+        const balanceAmount = parseFloat(row.querySelector('[name="balance_amount[]"]').value);
+        let enteredAmount = parseFloat(inputField.value);
+        const errorMessage = row.querySelector('.amount-error');
+        if (enteredAmount > balanceAmount) {
+            enteredAmount = balanceAmount;
+            inputField.value = enteredAmount;
+            errorMessage.textContent = "Amount should be ≤ " + balanceAmount;
+        } else {
+            errorMessage.textContent = "";
+        }
+    }
 </script>
 
 <script>
