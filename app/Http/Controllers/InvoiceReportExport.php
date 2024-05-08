@@ -25,7 +25,7 @@ class InvoiceReportExport implements FromCollection, WithHeadings
             'S.No',
             'Booking Id',
             'Invoice ID',
-            'Transporter Name',
+            // 'Transporter Name',
             'Date',
             'Destination',
             'Total Amount',

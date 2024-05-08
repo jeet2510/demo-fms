@@ -35,7 +35,7 @@
                     <th class="border">S.No</th>
                     <th class="border">Booking Id</th>
                     <th class="border">Invoice ID</th>
-                    <th class="border">Transporter Name</th>
+                    {{-- <th class="border">Transporter Name</th> --}}
                     <th class="border">Date</th>
                     <th class="border">Destination</th>
                     <th class="border">Total Amount</th>
@@ -51,7 +51,7 @@
                         <td class="whitespace-nowrap border">{{ $index + 1 }}</td>
                         <td class="border">{{ $invoice['booking_id'] }}</td>
                         <td class="border">{{ $invoice['invoice_id'] }}</td>
-                        <td class="border">{{ $invoice['transporter_name'] }}</td>
+                        {{-- <td class="border">{{ $invoice['transporter_name'] }}</td> --}}
                         <td class="border">{{ \Carbon\Carbon::parse($invoice['date'])->format('d-m-Y') }}</td>
                         <td class="border">{{ $invoice['destination'] }}</td>
                         <td class="border">{{ $invoice['total_booking_amount'] }}</td>

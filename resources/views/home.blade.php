@@ -158,7 +158,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Customer</th>
-                        <th>Transporter</th>
+                        {{-- <th>Transporter</th> --}}
                         <th>Booking Id</th>
                         <th>Date</th>
                         <th>Route Name</th>
@@ -178,7 +178,7 @@
                         <tr>
                             <td class="p-2">{{ $index + 1 }}</td>
                             <td>{{ optional($booking->customer)->company_name }}</td>
-                            <td class="p-2">{{ optional($booking->transporter)->transporter_name }}</td>
+                            {{-- <td class="p-2">{{ optional($booking->transporter)->transporter_name }}</td> --}}
                             <td class="p-2">{{ $booking->booking_id }}</td>
                             <td class="p-2">{{ $booking->date }}</td>
                             <td class="p-2">{{ optional($booking->route)->route }}</td>
@@ -350,8 +350,8 @@
                                             $downloadFileName = 'document.' . $extension;
                                         @endphp
 
-                                        <a href="{{ asset('public/'.$booking->booking_document) }}" class="btn btn-info"
-                                            download="{{ $downloadFileName }}"
+                                        <a href="{{ asset('public/' . $booking->booking_document) }}"
+                                            class="btn btn-info" download="{{ $downloadFileName }}"
                                             style="margin-bottom:18px; width: 80px">
                                             <svg width="20" height="20" viewBox="0 0 24 24"
                                                 fill="none" xmlns="http://www.w3.org/2000/svg">

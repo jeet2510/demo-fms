@@ -20,7 +20,7 @@ class BookingReportExport implements FromCollection, WithHeadings
         return [
             'Sno',
             'Booking ID',
-            'Transporter Name',
+            // 'Transporter Name',
             'Date',
             'Destination',
             'Total Booking Amount',

@@ -18,13 +18,14 @@
                                 value="{{ request()->get('date_to') }}">
                         </div>
                         <div class="col-md-3 flex-inline" style="margin-left: 20px; width: 160px;">
-                            <label for="transporter_id">{{ __('Select Driver') }}</label>
-                            <select name="transporter_id" id="transporter_id" class="form-select">
-                                <option value="" {{ !request()->filled('transporter_id') ? 'selected' : '' }}>
+                            <label for="selected_transporter_id">{{ __('Select Driver') }}</label>
+                            <select name="selected_transporter_id" id="selected_transporter_id" class="form-select">
+                                <option value=""
+                                    {{ !request()->filled('selected_transporter_id') ? 'selected' : '' }}>
                                     Select Transporter</option>
                                 @foreach ($transporter_list as $t)
                                     <option value="{{ $t->id }}"
-                                        {{ request()->get('transporter_id') == $t->id ? 'selected' : '' }}>
+                                        {{ request()->get('selected_transporter_id') == $t->id ? 'selected' : '' }}>
                                         {{ $t->transporter_name }}</option>
                                 @endforeach
                             </select>
@@ -35,7 +36,7 @@
                         </div>
                 </form>
                 <div class="col-md-3 mt-7 text-right" style="margin-left: 30rem;">
-                    <a href="{{ route('reports.transporterIndex', array_merge(['downlodcsv' => true], request()->only(['date_from', 'date_to']))) }}"
+                    <a href="{{ route('reports.transporterIndex', array_merge(['downlodcsv' => true], request()->only(['date_from', 'date_to', 'selected_transporter_id']))) }}"
                         class="btn btn-sm btn-outline-primary">{{ __('Export Excel') }}</a>
                 </div>
             </div>
@@ -64,7 +65,7 @@
                         <td class="whitespace-nowrap border">{{ $index + 1 }}</td>
                         <td class="border">{{ $data['booking_id'] }}</td>
                         <td class="border">{{ $data['invoice_id'] }}</td>
-                        <td class="border">{{ $data['driver_count'] }}</td>
+                        <td class="border">{{ $data['driver_name'] }}</td>
                         <td class="border">{{ $data['transporter_name'] }}</td>
                         <td class="border">{{ \Carbon\Carbon::parse($data['date'])->format('d-m-Y') }}</td>
                         <td class="border">{{ $data['destination'] }}</td>

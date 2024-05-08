@@ -31,13 +31,29 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        <div class="col-md-3 flex-inline" style="margin-left: 20px; width: 160px;">
+                            <label for="selected_transporter_id">{{ __('Select Transporter') }}</label>
+                            <select name="selected_transporter_id" id="selected_transporter_id" class="form-select">
+                                <option value=""
+                                    {{ !request()->filled('selected_transporter_id') ? 'selected' : '' }}>
+                                    Select Transporter</option>
+                                @foreach ($transporter_list as $transporter)
+                                    <option value="{{ $transporter->id }}"
+                                        {{ request()->get('selected_transporter_id') == $transporter->id ? 'selected' : '' }}>
+                                        {{ $transporter->transporter_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+
                         <div class="col-md-3 mt-6 flex-inline h-5" style="margin-left: 20px;">
                             <button class="btn btn-primary" id="filterBtn"
                                 onclick="filteredData()">{{ __('Filter') }}</button>
                         </div>
                 </form>
                 <div class="col-md-3 mt-7 text-right" style="margin-left: 30rem;">
-                    <a href="{{ route('reports.driverIndex', array_merge(['downlodcsv' => true], request()->only(['date_from', 'date_to']))) }}"
+                    <a href="{{ route('reports.driverIndex', array_merge(['downlodcsv' => true], request()->only(['date_from', 'date_to', 'selected_driver_id', 'selected_transporter_id']))) }}"
                         class="btn btn-sm btn-outline-primary">{{ __('Export Excel') }}</a>
                 </div>
             </div>

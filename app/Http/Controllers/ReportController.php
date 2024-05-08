@@ -53,7 +53,7 @@ class ReportController extends Controller
 
                 $processedData[] = [
                     'booking_id' => $booking->booking_id,
-                    'transporter_name' => optional($booking->transporter)->transporter_name,
+                    // 'transporter_name' => optional($booking->transporter)->transporter_name,
                     'date' => $booking->date,
                     'destination' => optional($booking->route)->route,
                     'total_booking_amount' => $booking->total_booking_amount,
@@ -81,7 +81,7 @@ class ReportController extends Controller
                     $processedData = [
                         'Sno' => $index + 1,
                         'booking_id' => $booking->booking_id,
-                        'transporter_name' => optional($booking->transporter)->transporter_name,
+                        // 'transporter_name' => optional($booking->transporter)->transporter_name,
                         'date' => $booking->date,
                         'destination' => optional($booking->route)->route,
                         'total_booking_amount' => $booking->total_booking_amount,
@@ -141,7 +141,7 @@ class ReportController extends Controller
                 $processedData[] = [
                     'booking_id' => $invoice->booking_id,
                     'invoice_id' => $invoice->id,
-                    'transporter_name' => optional($booking->transporter)->transporter_name,
+                    // 'transporter_name' => optional($booking->transporter)->transporter_name,
                     'date' => $invoice->date,
                     'destination' => optional($booking->route)->route,
                     'total_booking_amount' => $invoice->total_booking_amount,
@@ -173,7 +173,7 @@ class ReportController extends Controller
                         'S.No' => $index + 1,
                         'Booking Id' => $invoice->booking_id,
                         'Invoice ID' => $invoice->id,
-                        'Transporter Name' => optional($booking->transporter)->transporter_name,
+                        // 'Transporter Name' => optional($booking->transporter)->transporter_name,
                         'Date' => $invoice->date,
                         'Destination' => optional($invoice->route)->route,
                         'Total Amount' => $invoice->total_booking_amount,
@@ -334,8 +334,9 @@ class ReportController extends Controller
         $processedData = [];
         $userCreatorId = Auth::user()->creatorId();
         $driver_list = Driver::where('created_by', $userCreatorId)->get();
+        $transporter_list = Transporter::where('created_by', $userCreatorId)->get();
         $selected_driver_id = $request->input('selected_driver_id');
-
+        $selected_transporter_id = $request->input('selected_transporter_id');
         if (!$request->filled('date_from')) {
             $request->merge(['date_from' => now()->toDateString()]);
         }
@@ -363,12 +364,18 @@ class ReportController extends Controller
                 });
             });
         }
+
+        if ($selected_transporter_id) {
+            $bookingsQuery->whereJsonContains('transporter_id', $selected_transporter_id);
+        }
+        // dd($bookingsQuery->get());
+
         $bookings = $bookingsQuery->get();
 
         foreach ($bookings as $booking) {
             $transactions = Transaction::where('booking_id', $booking->id)->latest()->first();
             $invoiceId = $booking->invoice ? $booking->invoice->id : null;
-
+            $transporterIdArray = json_decode($booking->transporter_id, true);
             if($bookings && $booking->invoice){
                 $booking = $booking->invoice;
                 $invoiceId = $booking->id;
@@ -382,21 +389,20 @@ class ReportController extends Controller
             $driver_wise_data = [];
 
             for ($i = 0; $i < $numDrivers; $i++) {
-                // Check if the driver_id exists at the current index
+                // dd($transporterIdArray[$i]);
+                $transporter_name = $transporterIdArray[$i] ? Transporter::find($transporterIdArray[$i])->transporter_name : 'N/A';
                 if(isset($d_ids[$i])) {
                     $driver = Driver::find($d_ids[$i]);
                     $driverName = $driver ? $driver->driver_name : 'Unknown';
 
-                    // Check if there is no selected driver ID or if the current driver ID matches the selected driver ID
                     if (!$selected_driver_id || ($selected_driver_id && $d_ids[$i] == $selected_driver_id)) {
-                        // Add data only if there is no selected driver ID or if it matches the selected driver ID
                         $driver_wise_data[] = [
 
                             // 'driver_id' => $d_ids[$i],
                             'driver_name' => $driverName,
                             'booking_id' => $booking->booking_id,
                             'invoice_id' => $invoiceId,
-                            'transporter_name' => optional($booking->transporter)->transporter_name,
+                            'transporter_name' => $transporter_name,
                             'date' => $booking->date,
                             'destination' => optional($booking->route)->route,
                             'total_amount' => isset($total_d_amount[$i]) ? $total_d_amount[$i] : 0,
@@ -407,13 +413,12 @@ class ReportController extends Controller
                 }
             }
             $processedData = array_merge($processedData, $driver_wise_data);
-
         }
         if ($request->has('downlodcsv')) {
-            // Export the processed data to an Excel file
             return Excel::download(new DriverDataExport($processedData), 'driver_data.xlsx');
         }
-        return view('reports.driverIndex', compact('processedData', 'driver_list'));
+
+        return view('reports.driverIndex', compact('processedData', 'driver_list', 'transporter_list'));
     }
 
 
@@ -650,62 +655,128 @@ class ReportController extends Controller
         return response()->make($reportContent, 200, $headers);
     }
 
+    // public function indexTranporter(Request $request)
+    // {
+    //     $userCreatorId = Auth::user()->creatorId();
+    //     $processedData = [];
+
+    //     $dateFrom = $request->input('date_from', now()->toDateString());
+    //     $dateTo = $request->input('date_to', now()->toDateString());
+    //     $selected_transporter_id = $request->input('selected_transporter_id');
+    //     // Fetch all bookings within the specified date range
+    //     $bookings = Booking::where('created_by', $userCreatorId)
+    //                         ->whereBetween('date', [$dateFrom, $dateTo . ' 23:59:59']);
+
+    //     // Additional filtering by transporter ID if provided
+    //     if ($selected_transporter_id) {
+    //         $bookingsQuery->whereJsonContains('transporter_id', $selected_transporter_id);
+    //     }
+    //     $bookings = $bookings->get();
+    //     foreach ($bookings as $booking) {
+    //         // Check if there's a corresponding invoice for this booking
+    //         $transactions = Transaction::where('booking_id', $booking->id)->latest()->first();
+    //         $driver_count = $booking->countDistinctDrivers();
+    //         $transporter_name = $booking->transporter->transporter_name ?? 'N/A';
+    //         if($booking->invoice) {
+    //         $booking = $booking->invoice;
+    //         $invoiceId = $booking ? $booking->id : null;
+    //         }
+    //         // If an invoice is found, use invoice data
+    //             // If no invoice is found, use booking data
+
+    //             if ($transactions) {
+    //                 $totalPaidArray = explode(',', $transactions->paid_amount);
+    //                 $paidAmount = array_sum($totalPaidArray);
+    //             } else {
+    //                 $paidAmount = 0;
+    //             }
+
+    //             $processedData[] = [
+    //                 'transporter_name' => $transporter_name,
+    //                 'booking_id' => $booking->booking_id,
+    //                 'invoice_id' => $invoiceId ?? 'N/A',
+    //                 'date' => $booking->date,
+    //                 'destination' => optional($booking->route)->route,
+    //                 'total_booking_amount' => $booking->total_booking_amount,
+    //                 'paid_amount' => $paidAmount,
+    //                 'balance_amount' => $booking->total_booking_amount - $paidAmount,
+    //                 'driver_count' => $driver_count,
+    //             ];
+    //         }
+    //         if ($request->has('downlodcsv')) {
+    //             // Export the processed data to an Excel file
+    //             return Excel::download(new TranspoterDataExport($processedData), 'transporter_data.xlsx');
+    //         }
+    //         $transporter_list = Transporter::where('created_by', $userCreatorId)->get();
+    //     return view('reports.transporterIndex', compact('processedData', 'transporter_list'));
+    // }
+
     public function indexTranporter(Request $request)
-    {
-        $userCreatorId = Auth::user()->creatorId();
-        $processedData = [];
+{
+    $userCreatorId = Auth::user()->creatorId();
+    $processedData = [];
+    $dateFrom = $request->input('date_from', now()->toDateString());
+    $dateTo = $request->input('date_to', now()->toDateString());
+    $selected_transporter_id = $request->input('selected_transporter_id');
 
-        $dateFrom = $request->input('date_from', now()->toDateString());
-        $dateTo = $request->input('date_to', now()->toDateString());
+    // Fetch all transporters
+    $transporters = Transporter::where('created_by', $userCreatorId)->get();
 
-        // Fetch all bookings within the specified date range
-        $bookings = Booking::where('created_by', $userCreatorId)
-                            ->whereBetween('date', [$dateFrom, $dateTo . ' 23:59:59']);
+    // foreach ($transporters as $transporter) {
+        // Fetch bookings for the current transporter within the specified date range
+        $bookingsQuery = Booking::where('created_by', $userCreatorId)
+        ->whereBetween('date', [$dateFrom, $dateTo . ' 23:59:59']);
 
-        // Additional filtering by transporter ID if provided
-        if ($request->filled('transporter_id')) {
-            $transporterId = (int)$request->input('transporter_id');
-            $bookings->where('transporter_id', $transporterId);
+    // }dd($bookingsQuery->get());
+    $bookings = $bookingsQuery->get();
+
+    foreach ($bookings as $booking) {
+        $transactions = Transaction::where('booking_id', $booking->id)->latest()->first();
+        $transporterIdArray = $booking->transporter_id;
+        if($selected_transporter_id){
+            $transporterIdArray = $selected_transporter_id;
         }
-        $bookings = $bookings->get();
-        foreach ($bookings as $booking) {
-            // Check if there's a corresponding invoice for this booking
-            $transactions = Transaction::where('booking_id', $booking->id)->latest()->first();
-            $driver_count = $booking->countDistinctDrivers();
-            $transporter_name = $booking->transporter->transporter_name ?? 'N/A';
-            if($booking->invoice) {
-            $booking = $booking->invoice;
-            $invoiceId = $booking ? $booking->id : null;
+        $invoiceId = $booking->invoice ? $booking->invoice->id : null;
+        $d_ids = $transactions ? explode(',', $transactions->driver_id) : explode(',', $booking->driver_id);
+        $paid_d_amount = $transactions ? explode(',', $transactions->paid_amount) : [];
+        $total_d_amount = $transactions ? explode(',', $transactions->semi_total_booking_amount) : [];
+
+        $numDrivers = count($d_ids);
+
+        for ($i = 0; $i < $numDrivers; $i++) {
+            if (is_array($transporterIdArray)) {
+                $transporter_name = $transporterIdArray[$i] ? Transporter::find($transporterIdArray[$i])->transporter_name : 'N/A';
+            } else {
+                $transporter_name = Transporter::find($transporterIdArray)->transporter_name ?? 'N/A';
             }
-            // If an invoice is found, use invoice data
-                // If no invoice is found, use booking data
+            if(isset($d_ids[$i])) {
+                $driver = Driver::find($d_ids[$i]);
+                $driverName = $driver ? $driver->driver_name : 'Unknown';
 
-                if ($transactions) {
-                    $totalPaidArray = explode(',', $transactions->paid_amount);
-                    $paidAmount = array_sum($totalPaidArray);
-                } else {
-                    $paidAmount = 0;
-                }
-
+                // Add data for each driver to $processedData array
                 $processedData[] = [
-                    'transporter_name' => $transporter_name,
+                    'driver_name' => $driverName,
                     'booking_id' => $booking->booking_id,
-                    'invoice_id' => $invoiceId ,
+                    'invoice_id' => $invoiceId,
+                    'transporter_name' => $transporter_name,
                     'date' => $booking->date,
                     'destination' => optional($booking->route)->route,
-                    'total_booking_amount' => $booking->total_booking_amount,
-                    'paid_amount' => $paidAmount,
-                    'balance_amount' => $booking->total_booking_amount - $paidAmount,
-                    'driver_count' => $driver_count,
+                    'total_booking_amount' => isset($total_d_amount[$i]) ? $total_d_amount[$i] : 0,
+                    'paid_amount' => isset($paid_d_amount[$i]) ? $paid_d_amount[$i] : 0,
+                    'balance_amount' => isset($total_d_amount[$i]) && isset($paid_d_amount[$i]) ? $total_d_amount[$i] - $paid_d_amount[$i] : 0,
                 ];
             }
-            if ($request->has('downlodcsv')) {
-                // Export the processed data to an Excel file
-                return Excel::download(new TranspoterDataExport($processedData), 'transporter_data.xlsx');
-            }
-            $transporter_list = Transporter::where('created_by', $userCreatorId)->get();
-        return view('reports.transporterIndex', compact('processedData', 'transporter_list'));
+        }
     }
+    // }
+    if ($request->has('downlodcsv')) {
+        // Export the processed data to an Excel file
+        return Excel::download(new TranspoterDataExport($processedData), 'transporter_data.xlsx');
+    }
+
+    $transporter_list = Transporter::where('created_by', $userCreatorId)->get();
+    return view('reports.transporterIndex', compact('processedData', 'transporter_list'));
+}
 
     public function generateInvoiceReport(Request $request)
     {
