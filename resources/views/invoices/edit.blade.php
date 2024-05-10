@@ -114,7 +114,7 @@
                         value="{{ $booking->client->company_name }}" readonly>
                 </div>
 
-                
+
             </div>
 
             {{-- <select name="driver_id[]" id="driver_id" class="form-select mt-1 block w-full" multiple>
@@ -157,7 +157,7 @@
                             $waitingAmount = json_decode($booking->semi_waiting_amount);
                             $borderCharges = json_decode($booking->semi_border_charges);
                             $totalBookingAmounts = json_decode($booking->semi_total_booking_amount);
-							 $transporterIds = json_decode($booking->transporter_id);
+                            $transporterIds = json_decode($booking->transporter_id);
                         @endphp
 
                         @foreach ($driverIds as $driverIndex => $driverId)
@@ -169,13 +169,12 @@
                                         <td class="border p-4">{{ $driver->id_card_expiry_date }}</td>
                                         <td class="border p-4">{{ $driver->driving_license_number }}</td>
                                         <td class="border p-4">{{ $driver->driving_license_expiry_date }}</td>
-                                             <td class="border p-4">
-										 @foreach ($transporters as $transporter)
-                                
-                                {{ $transporter->id == $transporterIds[$driverIndex] ? $transporter->transporter_name  : '' }}
-								@endforeach
-                                </td>
-								<td class="border p-4">
+                                        <td class="border p-4">
+                                            @foreach ($transporters as $transporter)
+                                                {{ $transporter->id == $transporterIds[$driverIndex] ? $transporter->transporter_name : '' }}
+                                            @endforeach
+                                        </td>
+                                        <td class="border p-4">
                                             <input type="number" style="width: 100px;" name="semi_buying_amount[]"
                                                 onchange="recalculateTotal()"
                                                 class="semi_buying_amount form-input mt-1 block w-full"

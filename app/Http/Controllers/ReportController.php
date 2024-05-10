@@ -391,6 +391,10 @@ class ReportController extends Controller
             for ($i = 0; $i < $numDrivers; $i++) {
                 // dd($transporterIdArray[$i]);
                 $transporter_name = $transporterIdArray[$i] ? Transporter::find($transporterIdArray[$i])->transporter_name : 'N/A';
+
+                $d_ids[$i] = preg_replace('/[^0-9]/', '', $d_ids[$i]);
+                $d_ids[$i] = intval($d_ids[$i]);
+
                 if(isset($d_ids[$i])) {
                     $driver = Driver::find($d_ids[$i]);
                     $driverName = $driver ? $driver->driver_name : 'Unknown';

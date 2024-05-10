@@ -108,7 +108,7 @@
                     class="block border border-gray-300 p-2 rounded">{{ $booking->customer->company_name ?? 'No Customer Selected' }}</span>
             </div>
 
- 
+
 
             <div class="mb-4">
                 <label for="receiver_id" class="block text-gray-700">Receiver</label>
@@ -148,8 +148,8 @@
                         <th class="border p-4">ID Card EXPIRE AT:</th>
                         <th class="border p-4">Driver License</th>
                         <th class="border p-4">Driver License EXPIRE AT:</th>
-                         <th class="border p-4">Transporter </th>
-                         <th class="border p-4">Buying Amount </th>
+                        <th class="border p-4">Transporter </th>
+                        <th class="border p-4">Buying Amount </th>
                         <th class="border p-4">Border Charges </th>
                         <th class="border p-4">Paid Amount </th>
                         <th class="border p-4">Balance</th>
@@ -162,8 +162,8 @@
                         $buyingAmounts = json_decode($booking->semi_buying_amount);
                         $borderCharges = json_decode($booking->semi_border_charges);
                         $totalBookingAmounts = json_decode($booking->semi_total_booking_amount);
-                         $transporterIds = json_decode($booking->transporter_id);
-                            @endphp
+                        $transporterIds = json_decode($booking->transporter_id);
+                    @endphp
 
                     @foreach ($driverIds as $driverIndex => $driverId)
                         @foreach ($drivers as $driver)
@@ -174,18 +174,18 @@
                                     <td class="border p-4">{{ $driver->id_card_expiry_date }}</td>
                                     <td class="border p-4">{{ $driver->driving_license_number }}</td>
                                     <td class="border p-4">{{ $driver->driving_license_expiry_date }}</td>
-                                     
-										<td class="border p-4">
-										
-										 @foreach ($transporters as $transporter)
-										 @if(is_array($transporterIds))
-                                 {{ $transporter->id == $transporterIds[$driverIndex] ? $transporter->transporter_name  : '' }}
-								 @else
-									 {{ $transporter->id == $booking->transporter_id ? $transporter->transporter_name  : '' }}
-								 @endif
-								@endforeach
-                                </td> 
-								<td class="border p-4">
+
+                                    <td class="border p-4">
+
+                                        @foreach ($transporters as $transporter)
+                                            @if (is_array($transporterIds))
+                                                {{ $transporter->id == $transporterIds[$driverIndex] ? $transporter->transporter_name : '' }}
+                                            @else
+                                                {{ $transporter->id == $booking->transporter_id ? $transporter->transporter_name : '' }}
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                    <td class="border p-4">
                                         <input type="number" style="width: 100px;" name="semi_buying_amount[]"
                                             onchange="recalculateTotal()"
                                             class="semi_buying_amount form-input mt-1 block w-full"
@@ -233,6 +233,7 @@
                         @endforeach
                     @endforeach
                     <tr>
+                        <td class="border p-4"></td>
                         <td class="border p-4"></td>
                         <td class="border p-4"></td>
                         <td class="border p-4"></td>
