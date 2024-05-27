@@ -368,11 +368,11 @@
                                         src="/assets/images/user-profile.jpeg" alt="image" />
                                 </div>
                                 <div class="ltr:pl-4 rtl:pr-4 truncate">
-                                    <h4 class="text-base">John Doe<span
+                                    <h4 class="text-base">{{ Auth::user()->name }}<span
                                             class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Pro</span>
                                     </h4>
                                     <a class="text-black/60  hover:text-primary dark:text-dark-light/60 dark:hover:text-white"
-                                        href="javascript:;">johndoe@gmail.com</a>
+                                        href="javascript:;">{{ Auth::user()->email }}</a>
                                 </div>
                             </div>
                         </li>

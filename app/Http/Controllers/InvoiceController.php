@@ -127,7 +127,7 @@ class InvoiceController extends Controller
         $clients = Client::where('created_by', Auth::user()->creatorId())->get();
         $drivers = Driver::where('created_by', Auth::user()->creatorId())->get();
         $borders = Border::where('created_by', Auth::user()->creatorId())->get();
-        $transactions = Transaction::where('created_by', Auth::user()->creatorId())->get();
+        $transactions = Transaction::where('booking_id', $id)->latest()->first();
 
         return view('invoices.edit', compact('booking', 'customers','transporters', 'routes', 'clients', 'drivers', 'borders', 'transactions'));
     }

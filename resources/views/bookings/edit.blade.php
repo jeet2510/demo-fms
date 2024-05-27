@@ -166,8 +166,8 @@
                             <th class="border p-4">Transporter </th>
                             <th class="border p-4">Buying Amount </th>
                             <th class="border p-4">Border Charges </th>
-                            <th class="border p-4">Paid Amount </th>
                             <th class="border p-4">Total </th>
+                            <th class="border p-4">Advance /Paid Amount </th>
                         </tr>
                     </thead>
                     <tbody id="driverData">
@@ -176,8 +176,8 @@
                             $buyingAmounts = json_decode($booking->semi_buying_amount);
                             $borderCharges = json_decode($booking->semi_border_charges);
                             $totalBookingAmounts = json_decode($booking->semi_total_booking_amount);
-                             $transporterIds = json_decode($booking->transporter_id);
-                             @endphp
+                            $transporterIds = json_decode($booking->transporter_id);
+                        @endphp
 
                         @foreach ($driverIds as $driverIndex => $driverId)
                             @foreach ($drivers as $driver)
@@ -188,27 +188,51 @@
                                         <td class="border p-4">{{ $driver->id_card_expiry_date }}</td>
                                         <td class="border p-4">{{ $driver->driving_license_number }}</td>
                                         <td class="border p-4">{{ $driver->driving_license_expiry_date }}</td>
-                                       	<td class="border p-4">
-										 @foreach ($transporters as $transporter)
-										 @if(is_array($transporterIds))
-                                 {{ $transporter->id == $transporterIds[$driverIndex] ? $transporter->transporter_name  : '' }}
-								 @else
-									 {{ $transporter->id == $booking->transporter_id ? $transporter->transporter_name  : '' }}
-								 @endif
-								@endforeach
-                                </td>  <td class="border p-4">
-                                            <input type="number" style="width: 100px;" name="semi_buying_amount[]"
-                                                onchange="recalculateTotal()"
-                                                class="semi_buying_amount form-input mt-1 block w-full"
-                                                value="{{ isset($buyingAmounts[$driverIndex]) ? $buyingAmounts[$driverIndex] : 0 }}"
-                                                required>
+                                        <td class="border p-4">
+                                            @foreach ($transporters as $transporter)
+                                                @if (is_array($transporterIds))
+                                                    {{ $transporter->id == $transporterIds[$driverIndex] ? $transporter->transporter_name : '' }}
+                                                @else
+                                                    {{ $transporter->id == $booking->transporter_id ? $transporter->transporter_name : '' }}
+                                                @endif
+                                            @endforeach
                                         </td>
                                         <td class="border p-4">
-                                            <input type="text" style="width: 100px;" name="semi_border_charges[]"
-                                                onchange="recalculateTotal()"
-                                                class="semi_border_charges form-input mt-1 block w-full"
-                                                value="{{ isset($borderCharges[$driverIndex]) ? $borderCharges[$driverIndex] : 0 }}"
-                                                readonly>
+                                            @if (Auth::user()->type == 0)
+                                                <input type="number" style="width: 100px;" name="semi_buying_amount[]"
+                                                    onchange="recalculateTotal()"
+                                                    class="semi_buying_amount form-input mt-1 block w-full"
+                                                    value="{{ isset($buyingAmounts[$driverIndex]) ? $buyingAmounts[$driverIndex] : 0 }}"
+                                                    required>
+                                            @else
+                                                <input type="number" style="width: 100px;" name="semi_buying_amount[]"
+                                                    onchange="recalculateTotal()"
+                                                    class="semi_buying_amount form-input mt-1 block w-full"
+                                                    value="{{ isset($buyingAmounts[$driverIndex]) ? $buyingAmounts[$driverIndex] : 0 }}"
+                                                    required readonly>
+                                            @endif
+                                        </td>
+
+                                        <td class="border p-4">
+                                            @if (Auth::user()->type == 0)
+                                                <input type="text" style="width: 100px;" name="semi_border_charges[]"
+                                                    onchange="recalculateTotal()"
+                                                    class="semi_border_charges form-input mt-1 block w-full"
+                                                    value="{{ isset($borderCharges[$driverIndex]) ? $borderCharges[$driverIndex] : 0 }}">
+                                            @else
+                                                <input type="text" style="width: 100px;"
+                                                    name="semi_border_charges[]" onchange="recalculateTotal()"
+                                                    class="semi_border_charges form-input mt-1 block w-full"
+                                                    value="{{ isset($borderCharges[$driverIndex]) ? $borderCharges[$driverIndex] : 0 }}"
+                                                    readonly>
+                                            @endif
+                                        </td>
+                                        <td colspan="" class="border p-4">
+                                            <input type="number" style="width: 7rem;" onchange="recalculateTotal()"
+                                                name="semi_total_booking_amount[]"
+                                                class="semi_total_booking_amount form-input mt-1 block w-full"
+                                                value="{{ isset($totalBookingAmounts[$driverIndex]) ? $totalBookingAmounts[$driverIndex] : 0 }}"
+                                                required readonly>
                                         </td>
                                         <td class="border p-4">
                                             @if ($transactions && $transactions->count() > 0)
@@ -226,13 +250,7 @@
                                                 0
                                             @endif
                                         </td>
-                                        <td colspan="2" class="border p-4">
-                                            <input type="number" style="width: 7rem;" onchange="recalculateTotal()"
-                                                name="semi_total_booking_amount[]"
-                                                class="semi_total_booking_amount form-input mt-1 block w-full"
-                                                value="{{ isset($totalBookingAmounts[$driverIndex]) ? $totalBookingAmounts[$driverIndex] : 0 }}"
-                                                required readonly>
-                                        </td>
+
                                     </tr>
                                 @endif
                             @endforeach
@@ -252,6 +270,7 @@
                     </tbody>
                 </table>
             </div>
+
             <div class="grid grid-cols-3 gap-4">
                 <div class="mb-4">
                     <label for="buying_amount" class="block text-gray-700">Buying Amount</label>
@@ -496,16 +515,22 @@
                                 const cell1 = document.createElement('td');
                                 const cell2 = document.createElement('td');
                                 cell1.textContent = border.border_name;
+
                                 const inputElement = document.createElement('input');
                                 inputElement.type = 'text';
-                                inputElement.name = `seprate_border_charge[${borderId}]`;
-                                // Set the border charge value from the booking details
+                                inputElement.name = `separate_border_charge[${borderId}]`;
                                 inputElement.value = borderCharges[borderId] || border.border_charges;
                                 inputElement.classList.add('border-charge-input', 'form-input');
                                 cell2.appendChild(inputElement);
-                                inputElement.addEventListener('change', function() {
-                                    recalculateBorderCharges();
-                                });
+
+                                if ("{{ Auth::user()->type }}" === "0") {
+                                    inputElement.addEventListener('change', function() {
+                                        recalculateBorderCharges();
+                                    });
+                                } else {
+                                    inputElement.setAttribute('readonly', true);
+                                }
+
                                 row.appendChild(cell1);
                                 row.appendChild(cell2);
                                 routeTbodyElement.appendChild(row);

@@ -54,7 +54,7 @@
                     <th class="border">Date</th>
                     <th class="border">Destination</th>
                     <th class="border">Total Amount</th>
-                    <th class="border">Paid Amount</th>
+                    <th class="border">Advance / Paid Amount</th>
                     <th class="border">Balance Amount</th>
                     <th class="border">Action</th>
                 </tr>

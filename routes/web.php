@@ -16,7 +16,7 @@ use App\Http\Controllers\DriverController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\InvoiceController;
-
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 
 
@@ -144,7 +144,7 @@ Route::get('/bookings/{id}/edit', 'BookingController@editTracking')->name('booki
 Route::put('/bookings/{id}/update', 'BookingController@updateTracking')->name('bookings.updateTracking');
 
 Route::resource('transactions', TransactionController::class);
-
+Route::resource('user', UserController::class);
 
 
 Route::get('/reports/booking', [ReportController::class, 'bookingIndex'])->name('reports.bookingIndex');

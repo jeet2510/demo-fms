@@ -151,7 +151,7 @@
                         <th class="border p-4">Transporter </th>
                         <th class="border p-4">Buying Amount </th>
                         <th class="border p-4">Border Charges </th>
-                        <th class="border p-4">Paid Amount </th>
+                        <th class="border p-4">Advance / Paid Amount </th>
                         <th class="border p-4">Balance</th>
                         <th class="border p-4">Total </th>
                     </tr>

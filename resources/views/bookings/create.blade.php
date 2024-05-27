@@ -94,19 +94,21 @@
                     </select>
                 </div>
             </div>
-          <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-4">
 
-          
-			 <div class="mb-4">
-                <label for="driver_id" class="block text-gray-700">Driver</label>
-                <select name="driver_id[]" id="driver_id" class="form-select mt-1 block w-full" placeholder="Select Driver"multiple="multiple">
-                     @foreach ($drivers as $driver)
-                        <option value="{{ $driver->id }}">{{ $driver->driver_name }}/{{ $driver->phone_number }}</option>
-                    @endforeach
-                </select>
-			
+
+                <div class="mb-4">
+                    <label for="driver_id" class="block text-gray-700">Driver</label>
+                    <select name="driver_id[]" id="driver_id" class="form-select mt-1 block w-full"
+                        placeholder="Select Driver" multiple="multiple">
+                        @foreach ($drivers as $driver)
+                            <option value="{{ $driver->id }}">{{ $driver->driver_name }}/{{ $driver->phone_number }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <button type="button" id="addDriverBtn" class="btn btn-primary mt-2 text-sm">Add Driver</button>
+                </div>
             </div>
-</div>
 
 
 
@@ -124,7 +126,7 @@
                             {{-- <th class="border p-4">Truck Documents</th> --}}
                             {{-- <th class="border p-4">Vehicle Documents EXPIRE AT:</th> --}}
                             <th class="border p-4">Transporter:</th>
-							 <th class="border p-4">Buying Amount </th>
+                            <th class="border p-4">Buying Amount </th>
                             {{-- <th class="border p-4">Waiting Amount </th> --}}
                             <th class="border p-4">Border Charges </th>
                             <th class="border p-4">Total </th>
@@ -145,7 +147,8 @@
                     @foreach ($routes as $route)
                         <option value="{{ $route->id }}" data-route-detail="{{ $route }}"
                             data-border-charges="{{ $route->border_charges() }}" id="route_id">
-                            {{ $route->route }}</option>
+                            {{ $route->route }}
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -196,9 +199,9 @@
     </div>
     @include('bookings.modals')
     <link rel="stylesheet" href="{{ asset('resources/css/highlight.min.css') }}">
-    <script src="{{env('APP_URL')}}/assets/js/highlight.min.js"></script>
-    <script src="{{env('APP_URL')}}/assets/js/nice-select2.js"></script>
-    <script src="{{env('APP_URL')}}/assets/js/select2.full.min.js"></script>
+    <script src="{{ env('APP_URL') }}/assets/js/highlight.min.js"></script>
+    <script src="{{ env('APP_URL') }}/assets/js/nice-select2.js"></script>
+    <script src="{{ env('APP_URL') }}/assets/js/select2.full.min.js"></script>
     <script>
         $('.select2').select2();
         // seachable
@@ -285,118 +288,96 @@
 
     <script>
         $(document).ready(function() {
-            $('#driver_id').change(function() {
-                var selectedDrivers = $(this).val();
-
-
+            // Add event listener to the "Add Driver" button
+            $('#addDriverBtn').click(function() {
+                var selectedDrivers = $('#driver_id').val();
                 if (selectedDrivers && selectedDrivers.length > 0) {
-                    // Clear previous data in the table
-                    $('#driverData').html('');
-
-                    // Iterate over each selected driver
-                    selectedDrivers.forEach(function(driverId) {
-                        $.ajax({
-                            type: 'GET',
-                             url: '{{env('APP_URL')}}get-driver-details/' + driverId,
-                            success: function(data) {
-                                if (data.success) {
-                                    var driverData = data.driver;
-
-                                    // Append driver details to the table
-                                    var row = $('<tr>' +
-                                        '<td class="border p-4">' + driverData
-                                        .driver_name + '</td>' +
-                                        '<td class="border p-4' + (isDateExpired(
-                                                driverData.passport_expiry_date) ?
-                                            ' expired-date' : '') + '">' +
-                                        driverData.passport_expiry_date + (
-                                            isDateExpired(driverData
-                                                .passport_expiry_date) ?
-                                            ' <button class="password_upload-button" data-id =' +
-                                            driverId + '>Upload</button>' :
-                                            '') + '</td>' +
-                                        '<td class="border p-4' + (isDateExpired(
-                                                driverData.id_card_expiry_date) ?
-                                            ' expired-date' : '') + '">' +
-                                        driverData.id_card_expiry_date + (
-                                            isDateExpired(driverData
-                                                .id_card_expiry_date) ?
-                                            ' <button class="idcard_upload-button" data-id =' +
-                                            driverId + '>Upload</button>' :
-                                            '') + '</td>' +
-                                        '<td class="border p-4">' + driverData
-                                        .driving_license_number + '</td>' +
-                                        '<td class="border p-4' + (isDateExpired(
-                                                driverData
-                                                .driving_license_expiry_date) ?
-                                            ' expired-date' : '') + '">' +
-                                        driverData.driving_license_expiry_date + (
-                                            isDateExpired(driverData
-                                                .driving_license_expiry_date) ?
-                                            ' <button class="driver_upload-button" data-id =' +
-                                            driverId + '>Upload</button>' :
-                                            '') + '</td><td>' +
-                                       '<select name="transporter_id[]" id="transporter_id[]" style="width: 180px;" class="form-select select2 mt-1 block w-full" placeholder="Select Transporter" required>'+
-                                             '<option value="" >Select Transporter</option>' +
-					                      @foreach ($transporters as $transporter)
-                               '<option value="{{ $transporter->id }}">{{ $transporter->transporter_name }}</option>'+
-                                         @endforeach  
-										 '</select></td>'  +
-               
-                                        '<td class="border p-4"><input type="number" style="width: 100px;" name="semi_buying_amount[]" onchange="recalculateTotal()" class="semi_buying_amount form-input mt-1 block w-full" value="0" required></td>' +
-                                        '<td class="border p-4"><input type="text" style="width: 100px;" name="semi_border_charges[]" onchange="recalculateTotal()" class="semi_border_charges form-input mt-1 block w-full" value="0" readonly></td>' +
-                                        '<td colspan="2" class="border p-4"><input type="number" style="width: 7rem;" onchange="recalculateTotal()" name="semi_total_booking_amount[]" class="semi_total_booking_amount form-input mt-1 block w-full" value="0" required readonly></td>' +
-                                        '</tr>');
-
-                                    $('#driverData').append(row);
-
-
-                                    row.find(
-                                            '.semi_buying_amount, .semi_border_charges')
-                                        .on('input', function() {
-                                            var buyingAmount = parseFloat($(row)
-                                                .find('.semi_buying_amount')
-                                                .val()) || 0;
-                                            var borderCharges = parseFloat($(row)
-                                                .find('.semi_border_charges')
-                                                .val()) || 0;
-                                            var totalBookingAmount = buyingAmount +
-                                                borderCharges;
-                                            $(row).find(
-                                                    '.semi_total_booking_amount')
-                                                .val(totalBookingAmount);
-                                        });
-                                } else {
-                                    // Handle case when data is not found
-                                    $('#driverData').append(
-                                        '<tr><td colspan="11">Driver data not found</td></tr>'
-                                    );
+                    // Clear the table before adding new rows
+                    $('#driverData').empty();
+                    // Loop through each selected driver
+                    selectedDrivers.forEach(function(driverId, index) {
+                        setTimeout(function() {
+                            // Fetch driver details via AJAX
+                            $.ajax({
+                                type: 'GET',
+                                url: '{{ env('APP_URL') }}get-driver-details/' +
+                                    driverId,
+                                success: function(data) {
+                                    if (data.success) {
+                                        // Add row to table for each driver
+                                        addRowToTable(data.driver);
+                                    } else {
+                                        // Handle error or no data found
+                                        console.log('Driver data not found');
+                                    }
+                                },
+                                error: function(jqXHR, textStatus, errorThrown) {
+                                    console.error('Error fetching driver data:',
+                                        errorThrown);
                                 }
-                            }
-                        });
+                            });
+                        }, index * 500);
                     });
                 } else {
-                    // Clear the table if no drivers are selected
                     $('#driverData').html('');
                 }
             });
 
-            // Function to check if a date is expired
-            function isDateExpired(dateString) {
-                var date = new Date(dateString);
-                var currentDate = new Date();
-                return date < currentDate;
+            // Function to add row to table
+            function addRowToTable(driverData) {
+                // Construct the row HTML
+                var row = $('<tr>' +
+                    '<td class="border p-4">' + driverData.driver_name + '</td>' +
+                    '<td class="border p-4' + (isDateExpired(driverData.passport_expiry_date) ?
+                        ' expired-date' : '') + '">' + driverData.passport_expiry_date +
+                    (isDateExpired(driverData.passport_expiry_date) ?
+                        ' <button class="password_upload-button" data-id =' + driverData.id +
+                        '>Upload</button>' : '') + '</td>' +
+                    '<td class="border p-4' + (isDateExpired(driverData.id_card_expiry_date) ? ' expired-date' :
+                        '') + '">' + driverData.id_card_expiry_date +
+                    (isDateExpired(driverData.id_card_expiry_date) ?
+                        ' <button class="idcard_upload-button" data-id =' + driverData.id + '>Upload</button>' :
+                        '') + '</td>' +
+                    '<td class="border p-4">' + driverData.driving_license_number + '</td>' +
+                    '<td class="border p-4' + (isDateExpired(driverData.driving_license_expiry_date) ?
+                        ' expired-date' : '') + '">' + driverData.driving_license_expiry_date +
+                    (isDateExpired(driverData.driving_license_expiry_date) ?
+                        ' <button class="driver_upload-button" data-id =' + driverData.id + '>Upload</button>' :
+                        '') + '</td>' +
+                    '<td class="border p-4">' +
+                    '<select name="transporter_id[]" id="transporter_id[]" style="width: 180px;" class="form-select select2 mt-1 block w-full" placeholder="Select Transporter" required>' +
+                    '<option value="">Select Transporter</option>' +
+                    '@foreach ($transporters as $transporter)' +
+                    '<option value="{{ $transporter->id }}">{{ $transporter->transporter_name }}</option>' +
+                    '@endforeach' +
+                    '</select>' +
+                    '</td>' +
+                    '<td class="border p-4"><input type="number" style="width: 100px;" name="semi_buying_amount[]" onchange="recalculateTotal()" class="semi_buying_amount form-input mt-1 block w-full" value="0" required></td>' +
+                    '<td class="border p-4"><input type="text" style="width: 100px;" name="semi_border_charges[]" onchange="recalculateTotal()" class="semi_border_charges form-input mt-1 block w-full" value="0" readonly></td>' +
+                    '<td colspan="2" class="border p-4"><input type="number" style="width: 7rem;" onchange="recalculateTotal()" name="semi_total_booking_amount[]" class="semi_total_booking_amount form-input mt-1 block w-full" value="0" required readonly></td>' +
+                    '</tr>');
+
+                // Append the row to the table
+                $('#driverData').append(row);
             }
-
-
-            // Function to check if a date is expired
-            function isDateExpired(dateString) {
-                var date = new Date(dateString);
-                var currentDate = new Date();
-                return date < currentDate;
-            }
-
         });
+
+        // Function to check if a date is expired
+        function isDateExpired(dateString) {
+            var date = new Date(dateString);
+            var currentDate = new Date();
+            return date < currentDate;
+        }
+
+
+        // Function to check if a date is expired
+        function isDateExpired(dateString) {
+            var date = new Date(dateString);
+            var currentDate = new Date();
+            return date < currentDate;
+        }
+
+
 
         function recalculateBorderCharges() {
             var borderChargeInputs = document.getElementsByClassName('border-charge-input');
@@ -453,7 +434,8 @@
 
             document.getElementById('route_id').addEventListener('change', function() {
                 const selectedRoute = this.options[this.selectedIndex];
-                const routeDetails = JSON.parse(selectedRoute.getAttribute('data-route-detail'));
+                const routeDetails = JSON.parse(selectedRoute.getAttribute(
+                    'data-route-detail'));
                 let borderIds = routeDetails.border_id.split(',');
                 const borderCharges = routeDetails.border_charges;
                 routeTbodyElement.innerHTML = '';
@@ -471,7 +453,8 @@
                             inputElement.name = `seprate_border_charge[${borderId}]`;
                             inputElement.type = 'text';
                             inputElement.value = border.border_charges;
-                            inputElement.classList.add('border-charge-input', 'form-input');
+                            inputElement.classList.add('border-charge-input',
+                                'form-input');
                             // inputElement.setAttribute('name', 'border_charge');
                             cell2.appendChild(inputElement);
                             inputElement.addEventListener('change', function() {

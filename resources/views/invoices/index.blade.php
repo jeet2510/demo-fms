@@ -215,7 +215,7 @@
                     <th>Route Name</th>
                     <th>No of Drivers</th>
                     <th>Total Amount</th>
-                    <th>Paid Amount</th>
+                    <th>Advance / Paid Amount</th>
                     <th>Balance Amount</th>
                     <th>Status</th>
                     <th>Actions</th>

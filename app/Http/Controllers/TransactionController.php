@@ -36,7 +36,21 @@ class TransactionController extends Controller
         return view('transactions.index', compact('customers', 'routes', 'clients', 'drivers', 'bookings', 'city_list', 'transactions'));
     }
 
+    public function create()
+    {
+        $customers = Customer::where('created_by', Auth::user()->creatorId())->get();
+        $routes = Route::where('created_by', Auth::user()->creatorId())->get();
+        $city_list = City::where('created_by', Auth::user()->creatorId())->get();
+        $clients = Client::where('created_by', Auth::user()->creatorId())->get();
+        $drivers = Driver::where('created_by', Auth::user()->creatorId())->get();
+        // $bookings = Booking::where('created_by', Auth::user()->creatorId())->get();
+        $bookings = Booking::where('paid_status', 0)->with(['transactions' => function ($query) {
+            $query->latest()->limit(1);
+        }, 'invoice'])->get();
+        $transactions = Transaction::where('created_by', Auth::user()->creatorId())->get();
 
+        return view('transactions.create', compact('customers', 'routes', 'clients', 'drivers', 'bookings', 'city_list', 'transactions'));
+    }
 
 public function store(Request $request)
 {
@@ -67,7 +81,7 @@ public function store(Request $request)
             return number_format($value, 2); // Convert integer to decimal with 2 decimal places
         }, $validatedData[$field]);
     }
-
+    // dd($validatedData);
     // Convert array values to comma-separated strings
     $validatedData['driver_id'] = implode(',', $validatedData['driver_id']);
     $validatedData['semi_buying_amount'] = implode(',', $validatedData['semi_buying_amount']);
@@ -185,16 +199,7 @@ public function store(Request $request)
     /**
      * Remove the specified resource from storage.
      */
-    public function create()
-    {
-        $customers = Customer::where('created_by', Auth::user()->creatorId())->get();
-        $routes = Route::where('created_by', Auth::user()->creatorId())->get();
-        $clients = Client::where('created_by', Auth::user()->creatorId())->get();
-        $drivers = Driver::where('created_by', Auth::user()->creatorId())->get();
-        $borders = Border::where('created_by', Auth::user()->creatorId())->get();
 
-        return view('bookings.create', compact('customers', 'routes', 'clients', 'drivers', 'borders'));
-    }
 
   public function show($id)
   {

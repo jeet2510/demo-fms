@@ -380,10 +380,23 @@ class ReportController extends Controller
                 $booking = $booking->invoice;
                 $invoiceId = $booking->id;
             }
-
+            // dd($transactions->semi_total_booking_amount);
             $d_ids = $transactions ? explode(',', $transactions->driver_id) : explode(',', $booking->driver_id);
             $paid_d_amount = $transactions ? explode(',', $transactions->paid_amount) : [];
-            $total_d_amount = $transactions ? explode(',', $transactions->semi_total_booking_amount) : [];
+            // $total_d_amount = $transactions ? explode(',', $transactions->semi_total_booking_amount) : [];
+//             $total_d_amount =  $transactions->semi_total_booking_amount;
+//             // preg_split('/(?:,|\.00,)/', trim($transactions->semi_total_booking_amount ?? ''));
+//             preg_match_all('/\d+\.?\d*/', $total_d_amount, $matches);
+// $total_d_amount = $matches[0];
+
+$total_d_amount = $transactions ? $transactions->semi_total_booking_amount : '';
+$total_d_amount = trim($total_d_amount); // Trim whitespace
+$total_d_amount = explode('.00,', $total_d_amount); // Explode by ".00," delimiter
+
+// Further process each element to remove commas and convert to floats
+$total_d_amount = array_map(function ($item) {
+    return (float)str_replace(',', '', $item);
+}, $total_d_amount);
 
             $numDrivers = count($d_ids);
             $driver_wise_data = [];
@@ -737,22 +750,36 @@ class ReportController extends Controller
     foreach ($bookings as $booking) {
         $transactions = Transaction::where('booking_id', $booking->id)->latest()->first();
         $transporterIdArray = $booking->transporter_id;
+
         if($selected_transporter_id){
             $transporterIdArray = $selected_transporter_id;
         }
         $invoiceId = $booking->invoice ? $booking->invoice->id : null;
         $d_ids = $transactions ? explode(',', $transactions->driver_id) : explode(',', $booking->driver_id);
         $paid_d_amount = $transactions ? explode(',', $transactions->paid_amount) : [];
-        $total_d_amount = $transactions ? explode(',', $transactions->semi_total_booking_amount) : [];
+        // $total_d_amount = $transactions ? explode(',', $transactions->semi_total_booking_amount) : [];
+        $total_d_amount = $transactions ? $transactions->semi_total_booking_amount : '';
+$total_d_amount = trim($total_d_amount); // Trim whitespace
+$total_d_amount = explode('.00,', $total_d_amount); // Explode by ".00," delimiter
+$total_d_amount = array_map(function ($item) {
+    return (float)str_replace(',', '', $item);
+}, $total_d_amount);
 
         $numDrivers = count($d_ids);
 
+
         for ($i = 0; $i < $numDrivers; $i++) {
-            if (is_array($transporterIdArray)) {
-                $transporter_name = $transporterIdArray[$i] ? Transporter::find($transporterIdArray[$i])->transporter_name : 'N/A';
-            } else {
-                $transporter_name = Transporter::find($transporterIdArray)->transporter_name ?? 'N/A';
-            }
+            // Example input (you can remove this line, it's just for illustration)
+// $transporterIdArray = '["2","3"]';
+
+if (is_array($transporterIdArray) || (is_string($transporterIdArray) && preg_match('/^\[.*\]$/', $transporterIdArray) && $transporterIdArray = json_decode($transporterIdArray, true))) {
+    // If $transporterIdArray is an array or a JSON string that decodes to an array
+    $transporter_name = isset($transporterIdArray[$i]) ? Transporter::find($transporterIdArray[$i])->transporter_name : 'N/A';
+} else {
+    // If $transporterIdArray is a single value
+    $transporter_name = Transporter::find($transporterIdArray)->transporter_name ?? 'N/A';
+}
+
             if(isset($d_ids[$i])) {
                 $driver = Driver::find($d_ids[$i]);
                 $driverName = $driver ? $driver->driver_name : 'Unknown';
@@ -767,6 +794,7 @@ class ReportController extends Controller
                     'destination' => optional($booking->route)->route,
                     'total_booking_amount' => isset($total_d_amount[$i]) ? $total_d_amount[$i] : 0,
                     'paid_amount' => isset($paid_d_amount[$i]) ? $paid_d_amount[$i] : 0,
+                    // 'balance_amount' => isset($total_d_amount[$i]) && isset($paid_d_amount[$i]) ? $total_d_amount[$i] - $paid_d_amount[$i] : 0,
                     'balance_amount' => isset($total_d_amount[$i]) && isset($paid_d_amount[$i]) ? $total_d_amount[$i] - $paid_d_amount[$i] : 0,
                 ];
             }
