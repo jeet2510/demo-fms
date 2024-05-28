@@ -19,6 +19,8 @@ class Booking extends Model
 		'driver_id',
         'route_id',
         'buying_amount',
+        'origin_city',
+        'destination_city',
         'border_charges',
         'seprate_border_charge',
         'total_booking_amount',
@@ -83,6 +85,16 @@ class Booking extends Model
     {
         $driverIds = explode(',', $this->driver_id);
         return count(array_unique($driverIds));
+    }
+
+    public function getCityDetail($id)
+    {
+        return City::where('id', $id)->first();
+    }
+
+    public function getCountryByCity($id)
+    {
+        return Country::where('id', $id)->first();
     }
 
 //     public function transactions()

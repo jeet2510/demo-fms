@@ -31,6 +31,18 @@ class Route extends Model
         return $this->belongsTo(City::class, 'destination_city_id');
     }
 
+    public function originCountry()
+    {
+        //origin_city_id has been che is field name for original country
+        return $this->belongsTo(Country::class, 'origin_city_id');
+    }
+
+    public function destinationCountry()
+    {
+        //destination_city_id has been che is field name for destination country
+        return $this->belongsTo(Country::class, 'destination_city_id');
+    }
+
 
 //    public function borders()
 //    {

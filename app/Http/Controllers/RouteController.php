@@ -19,10 +19,10 @@ class RouteController extends Controller
     public function index()
     {
         $routes = Route::where('created_by', Auth::user()->creatorId())->get();
-        $cities = City::where('created_by', Auth::user()->creatorId())->get();
+        $countries = Country::where('created_by', Auth::user()->creatorId())->get();
         $borders = Border::where('created_by', Auth::user()->creatorId())->get();
         // dd($cities);
-        return view('lanes.index', compact('routes', 'borders', 'cities'));
+        return view('lanes.index', compact('routes', 'borders', 'countries'));
     }
 
     // public function index()
@@ -101,9 +101,10 @@ class RouteController extends Controller
     public function create()
     {
         $cities = City::where('created_by', Auth::user()->creatorId())->get();
+        $countries = Country::where('created_by', Auth::user()->creatorId())->get();
         $borders = Border::where('created_by', Auth::user()->creatorId())->get();
 
-        return view('lanes.create', compact('cities', 'borders'));
+        return view('lanes.create', compact('cities', 'borders', 'countries'));
     }
 
     public function show($id)

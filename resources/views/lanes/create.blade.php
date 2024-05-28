@@ -16,30 +16,26 @@
 
         <div class="mb-4 flex">
             <div class="mr-2 w-1/2">
-                <label for="origin_city_id">Select Origin City</label>
+                <label for="origin_city_id">Select Origin Country</label>
                 <select name="origin_city_id" id="origin_city_id" class="form-input" required>
-                    <option value="">Select Origin City</option>
-                    @if ($cities)
-                        @foreach ($cities as $city)
-                            @if (isset($city->country->name))
-                                <option value="{{ $city->id }}">{{ $city->city_name }} ({{ $city->country->name }})
-                                </option>
-                            @endif
+                    <option value="">Select Origin Country</option>
+                    @if ($countries)
+                        @foreach ($countries as $city)
+                            <option value="{{ $city->id }}">{{ $city->name }}
+                            </option>
                         @endforeach
                     @endif
                 </select>
             </div>
 
             <div class="w-1/2">
-                <label for="destination_city_id">Select Destination City</label>
+                <label for="destination_city_id">Select Destination Country</label>
                 <select name="destination_city_id" id="destination_city_id" class="form-input" required>
-                    <option value="">Select Destination City</option>
-                    @if ($cities)
-                        @foreach ($cities as $city)
-                            @if (isset($city->country->name))
-                                <option value="{{ $city->id }}">{{ $city->city_name }} ({{ $city->country->name }})
-                                </option>
-                            @endif
+                    <option value="">Select Destination Country</option>
+                    @if ($countries)
+                        @foreach ($countries as $city)
+                            <option value="{{ $city->id }}">{{ $city->name }}
+                            </option>
                         @endforeach
                     @endif
                 </select>

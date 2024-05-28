@@ -99,12 +99,12 @@
                             <td class="p-2">
                                 <a href="{{ route('customers.edit', $customer->id) }}" class="btn btn-primary"
                                     style="width: 50px; display: inline-block;">Edit</a>
-                                <form action="{{ route('customers.destroy', $customer->id) }}"method="post"
+                                {{-- <form action="{{ route('customers.destroy', $customer->id) }}"method="post"
                                     class="inline" style="display: inline-block;">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger" style="width: 50px;">Delete</button>
-                                </form>
+                                </form> --}}
                             </td>
                         </tr>
                     @endforeach

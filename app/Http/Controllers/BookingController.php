@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-namespace App\Http\Controllers;
-
 use App\Models\Booking;
 use App\Models\Border;
 use App\Models\Client;
@@ -12,6 +10,8 @@ use App\Models\Transporter;
 use Illuminate\Support\Str;
 use App\Models\Driver;
 use App\Models\Route;
+use App\Models\Truck;
+use App\Models\City;
 use App\Models\Tracking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +34,13 @@ class BookingController extends Controller
         $routes = Route::where('created_by', Auth::user()->creatorId())->get();
         $clients = Client::where('created_by', Auth::user()->creatorId())->get();
         $drivers = Driver::where('created_by', Auth::user()->creatorId())->get();
+        if($drivers == null || $drivers->count() == 0){
+            $trucks = Truck::where('created_by', Auth::user()->creatorId())->get();
+            if($trucks == null || $trucks->count() == 0){
+                return redirect()->route('trucks.index')->with('error', 'Please Add Driver or Truck');
+            }
+            return redirect()->route('drivers.index')->with('error', 'Please Add Driver');
+        }
         // $bookings = Booking::where('created_by', Auth::user()->creatorId())->with('invoice')->get();
         $bookings = Booking::where('created_by', Auth::user()->creatorId())
                     ->doesnthave('invoice');
@@ -65,6 +72,8 @@ class BookingController extends Controller
             'semi_buying_amount.*' => 'required|numeric',
             'semi_border_charges.*' => 'required|numeric',
             'semi_total_booking_amount.*' => 'required|numeric',
+            'origin_city' => 'required',
+            'destination_city' => 'required',
         ]);
         $seprate_border_charges = json_encode($request->seprate_border_charge ?? NULL);
         $booking = new Booking();
@@ -75,6 +84,8 @@ class BookingController extends Controller
          $booking->receiver_id = $validatedData['receiver_id'];
         $booking->driver_id = implode(',', $validatedData['driver_id']);
         $booking->route_id = $validatedData['route_id'];
+        $booking->origin_city = $validatedData['origin_city'];
+        $booking->destination_city = $validatedData['destination_city'];
         $booking->buying_amount = $validatedData['buying_amount'];
         $booking->border_charges = $validatedData['border_charges'];
         $booking->seprate_border_charge = $seprate_border_charges;
@@ -143,8 +154,8 @@ class BookingController extends Controller
         $clients = Client::where('created_by', Auth::user()->creatorId())->get();
         $drivers = Driver::where('created_by', Auth::user()->creatorId())->get();
         $borders = Border::where('created_by', Auth::user()->creatorId())->get();
-
-        return view('bookings.create', compact('customers', 'transporters','routes', 'clients', 'drivers', 'borders'));
+        $cities = City::where('created_by', Auth::user()->creatorId())->get();
+        return view('bookings.create', compact('customers', 'transporters','routes', 'clients', 'drivers', 'borders', 'cities'));
     }
 
     public function edit($id)

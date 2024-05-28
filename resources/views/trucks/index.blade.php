@@ -82,25 +82,26 @@
                 <tr>
                     <th>S.No</th>
                     <th>Truck Type</th>
-                <th>Capacity Tons</th>
-                <th>Action</th>
+                    <th>Capacity Tons</th>
+                    <th>Action</th>
 
-            </tr>
-        </thead>
+                </tr>
+            </thead>
 
-        <tbody>
-            @foreach ($trucks as $index => $truck)
-                <tr class="border-b">
-                    <td class="p-2">{{ $index + 1 }}</td>
-                    <td class="p-2">{{ $truck->truck_type}}</td>
-                    <td class="p-2">{{ $truck->capacity}}</td>
+            <tbody>
+                @foreach ($trucks as $index => $truck)
+                    <tr class="border-b">
+                        <td class="p-2">{{ $index + 1 }}</td>
+                        <td class="p-2">{{ $truck->truck_type }}</td>
+                        <td class="p-2">{{ $truck->capacity }}</td>
                         <td class="p-2">
-                            <a href="{{ route('trucks.edit', $truck->id) }}" class="btn btn-primary" style="width: 50px; display: inline-block;">Edit</a>
-                            <form action="{{ route('trucks.destroy', ['truck' => $truck->id]) }}" method="post"class="inline" style="display: inline-block;">
+                            <a href="{{ route('trucks.edit', $truck->id) }}" class="btn btn-primary"
+                                style="width: 50px; display: inline-block;">Edit</a>
+                            {{-- <form action="{{ route('trucks.destroy', ['truck' => $truck->id]) }}" method="post"class="inline" style="display: inline-block;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger" style="width: 50px;">Delete</button>
-                            </form>
+                            </form> --}}
                         </td>
                     </tr>
                 @endforeach

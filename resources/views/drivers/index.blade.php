@@ -92,28 +92,27 @@
                 </thead>
                 <tbody>
                     @foreach ($drivers as $index => $driver)
-                    <tr>
-                        <td class="p-2">{{ $index + 1 }}</td>
-                        <td class="p-2">{{ $driver->driver_name }}</td>
-                        <td class="p-2">{{ optional($driver->truck_type)->truck_type }}</td>
-                        <td class="p-2">{{ $driver->phone_number }}</td>
-                        <td class="p-2">{{ $driver->whatsapp_number }}</td>
-                        <td class="p-2">
-                            <a href="{{ route('drivers.edit', $driver->id) }}"
-                                class="btn btn-primary"
-                            style="width: 50px; display: inline-block;">Edit</a>
-                            <form action="{{ route('drivers.destroy', $driver->id) }}"method="post"
+                        <tr>
+                            <td class="p-2">{{ $index + 1 }}</td>
+                            <td class="p-2">{{ $driver->driver_name }}</td>
+                            <td class="p-2">{{ optional($driver->truck_type)->truck_type }}</td>
+                            <td class="p-2">{{ $driver->phone_number }}</td>
+                            <td class="p-2">{{ $driver->whatsapp_number }}</td>
+                            <td class="p-2">
+                                <a href="{{ route('drivers.edit', $driver->id) }}" class="btn btn-primary"
+                                    style="width: 50px; display: inline-block;">Edit</a>
+                                {{-- <form action="{{ route('drivers.destroy', $driver->id) }}"method="post"
                                 class="inline" style="display: inline-block;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger" style="width: 50px;">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+                            </form> --}}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 
 </x-layout.default>

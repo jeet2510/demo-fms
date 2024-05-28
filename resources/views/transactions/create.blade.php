@@ -181,6 +181,8 @@
                 const transporterIds = selectedBooking.transporter_id;
 
                 const amounts = selectedBooking.transactions[0]?.paid_amount || 0;
+                const originCityId = selectedBooking ? selectedBooking.origin_city : '';
+                const destinationCityId = selectedBooking ? selectedBooking.destination_city : '';
                 if (selectedBooking.invoice != null) {
                     selectedBooking = selectedBooking.invoice;
                 }
@@ -189,9 +191,6 @@
                     const route = routes.find(route => route.id === routeId);
 
                     const routeName = route ? route.route : '';
-                    const originCityId = route ? route.origin_city_id : '';
-                    const destinationCityId = route ? route.destination_city_id : '';
-
                     const originCity = cities.find(city => city.id === originCityId);
                     const destinationCity = cities.find(city => city.id === destinationCityId);
                     document.getElementById('routename').value = routeName;

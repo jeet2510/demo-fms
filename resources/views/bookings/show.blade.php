@@ -151,9 +151,10 @@
                         <th class="border p-4">Transporter </th>
                         <th class="border p-4">Buying Amount </th>
                         <th class="border p-4">Border Charges </th>
+                        <th class="border p-4">Total </th>
                         <th class="border p-4">Advance / Paid Amount </th>
                         <th class="border p-4">Balance</th>
-                        <th class="border p-4">Total </th>
+
                     </tr>
                 </thead>
                 <tbody id="driverData">
@@ -199,6 +200,13 @@
                                             value="{{ isset($borderCharges[$driverIndex]) ? $borderCharges[$driverIndex] : 0 }}"
                                             readonly>
                                     </td>
+                                    <td colspan="" class="border p-4">
+                                        <input type="number" style="width: 7rem;" onchange="recalculateTotal()"
+                                            name="semi_total_booking_amount[]"
+                                            class="semi_total_booking_amount form-input mt-1 block w-full"
+                                            value="{{ isset($totalBookingAmounts[$driverIndex]) ? $totalBookingAmounts[$driverIndex] : 0 }}"
+                                            required readonly>
+                                    </td>
                                     <td class="border p-4">
                                         @if ($transactions && $transactions->count() > 0)
                                             @php
@@ -221,13 +229,7 @@
                                     </td>
                                     <td class="border p-4">
                                         {{ ($totalBookingAmounts[$driverIndex] ?? 0) - ($paid_amount[$driverIndex] ?? 0) }}
-                                    <td colspan="2" class="border p-4">
-                                        <input type="number" style="width: 7rem;" onchange="recalculateTotal()"
-                                            name="semi_total_booking_amount[]"
-                                            class="semi_total_booking_amount form-input mt-1 block w-full"
-                                            value="{{ isset($totalBookingAmounts[$driverIndex]) ? $totalBookingAmounts[$driverIndex] : 0 }}"
-                                            required readonly>
-                                    </td>
+
                                 </tr>
                             @endif
                         @endforeach
@@ -247,30 +249,55 @@
                             <p>{{ $booking->border_charges }}</p>
                         </td>
                         <td class="border p-4">
+                            <p>{{ $booking->total_booking_amount }}</p>
+                        </td>
+                        <td class="border p-4">
                             <p>{{ $total_paid_amount ?? 0 }}</p>
                         </td>
                         <td class="border p-4">
                             <p>{{ ($booking->total_booking_amount ?? 0) - ($total_paid_amount ?? 0) }}</p>
                         </td>
-                        <td class="border p-4">
-                            <p>{{ $booking->total_booking_amount }}</p>
-                        </td>
+
                     </tr>
 
                 </tbody>
             </table>
         </div>
-        <div class="overflow-x-auto hidden mt-5" style="width: 40%;" id="borderChargesTable">
-            <table>
-                <thead>
-                    <tr>
-                        <th class="border p-4">Border Name</th>
-                        <th class="border p-4">Border Charges</th>
-                    </tr>
-                </thead>
-                <tbody id="borderChargesData">
-                </tbody>
-            </table>
+        <div class="overflow-x-auto hidden grid grid-cols-2 gap-4" id="borderChargesTable">
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="border p-4">Border Name</th>
+                            <th class="border p-4">Border Charges</th>
+                        </tr>
+                    </thead>
+                    <tbody id="borderChargesData">
+                    </tbody>
+                </table>
+            </div>
+            <div class=" p-6 rounded-lg shadow-lg">
+                <div class="mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">Origin City:</h2>
+                    <p class="text-lg text-gray-600 mt-2">
+                        <?php
+                        $origin_city_data = $booking->getCityDetail($booking->origin_city) ?? 'N/A';
+                        $origin_country = $booking->getCountryByCity($origin_city_data->country_id) ?? 'N/A';
+                        ?>
+                        {{ $origin_city_data->city_name . '(' . $origin_country->name . ')' }}
+                    </p>
+                </div>
+                <div class="mb-4">
+                    <?php
+                    $destination_city_data = $booking->getCityDetail($booking->destination_city) ?? 'N/A';
+                    $destination_country = $booking->getCountryByCity($destination_city_data->country_id) ?? 'N/A';
+                    ?>
+                    <h2 class="text-xl font-semibold text-gray-800">Destination City:</h2>
+                    <p class="text-lg text-gray-600 mt-2">
+                        {{ $destination_city_data->city_name . '(' . $destination_country->name . ')' }}
+                    </p>
+                </div>
+            </div>
         </div>
 
 

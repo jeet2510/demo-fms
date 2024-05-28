@@ -114,17 +114,7 @@
                     </select>
                 </div>
 
-                <div class="mb-4">
-                    <label for="transporter_id" class="block text-gray-700">Transporter</label>
-                    <select name="transporter_id" id="transporter_id" class="form-select mt-1 block w-full" disabled>
-                        <option value="">Select Transporter</option>
-                        @foreach ($transporters as $transporter)
-                            <option value="{{ $transporter->id }}"
-                                {{ $booking->transporter_id == $transporter->id ? 'selected' : '' }}>
-                                {{ $transporter->transporter_name }}</option>
-                        @endforeach
-                    </select>
-                </div>
+
                 <div class="mb-4">
                     <label for="receiver_id" class="block text-gray-700">Receiver</label>
                     <select name="receiver_id" id="receiver_id" class="form-select mt-1 block w-full" disabled>
@@ -220,8 +210,8 @@
                                                     class="semi_border_charges form-input mt-1 block w-full"
                                                     value="{{ isset($borderCharges[$driverIndex]) ? $borderCharges[$driverIndex] : 0 }}">
                                             @else
-                                                <input type="text" style="width: 100px;"
-                                                    name="semi_border_charges[]" onchange="recalculateTotal()"
+                                                <input type="text" style="width: 100px;" name="semi_border_charges[]"
+                                                    onchange="recalculateTotal()"
                                                     class="semi_border_charges form-input mt-1 block w-full"
                                                     value="{{ isset($borderCharges[$driverIndex]) ? $borderCharges[$driverIndex] : 0 }}"
                                                     readonly>
@@ -258,17 +248,41 @@
                     </tbody>
                 </table>
             </div>
-            <div class="overflow-x-auto hidden" id="borderChargesTable">
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="border p-4">Border Name</th>
-                            <th class="border p-4">Border Charges</th>
-                        </tr>
-                    </thead>
-                    <tbody id="borderChargesData">
-                    </tbody>
-                </table>
+            <div class="overflow-x-auto hidden grid grid-cols-2 gap-4" id="borderChargesTable">
+                <div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="border p-4">Border Name</th>
+                                <th class="border p-4">Border Charges</th>
+                            </tr>
+                        </thead>
+                        <tbody id="borderChargesData">
+                        </tbody>
+                    </table>
+                </div>
+                <div class=" p-6 rounded-lg shadow-lg">
+                    <div class="mb-4">
+                        <h2 class="text-xl font-semibold text-gray-800">Origin City:</h2>
+                        <p class="text-lg text-gray-600 mt-2">
+                            <?php
+                            $origin_city_data = $booking->getCityDetail($booking->origin_city) ?? 'N/A';
+                            $origin_country = $booking->getCountryByCity($origin_city_data->country_id) ?? 'N/A';
+                            ?>
+                            {{ $origin_city_data->city_name . '(' . $origin_country->name . ')' }}
+                        </p>
+                    </div>
+                    <div class="mb-4">
+                        <?php
+                        $destination_city_data = $booking->getCityDetail($booking->destination_city) ?? 'N/A';
+                        $destination_country = $booking->getCountryByCity($destination_city_data->country_id) ?? 'N/A';
+                        ?>
+                        <h2 class="text-xl font-semibold text-gray-800">Destination City:</h2>
+                        <p class="text-lg text-gray-600 mt-2">
+                            {{ $destination_city_data->city_name . '(' . $destination_country->name . ')' }}
+                        </p>
+                    </div>
+                </div>
             </div>
 
             <div class="grid grid-cols-3 gap-4">

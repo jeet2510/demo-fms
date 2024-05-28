@@ -145,11 +145,12 @@
                             <th class="border p-4">Driver License EXPIRE AT:</th>
                             <th class="border p-4">Transporter </th>
                             <th class="border p-4">Buying Amount </th>
-                            <th class="border p-4">Waiting Amount </th>
                             <th class="border p-4">Border Charges </th>
-                            <th class="border p-4">Advace / Paid Amount</th>
-                            <th class="border p-4">Balance Amount</th>
+                            <th class="border p-4">Waiting Amount </th>
                             <th class="border p-4">Total </th>
+                            <th class="border p-4">Advance / Paid Amount</th>
+                            <th class="border p-4">Balance Amount</th>
+
                         </tr>
                     </thead>
                     <tbody id="driverData">
@@ -195,18 +196,12 @@
                                                     required readonly>
                                             @endif
                                         </td>
-                                        <td class="border p-4">
-                                            <input type="text" style="width: 100px;" name="semi_waiting_amount[]"
-                                                onchange="recalculateTotal()"
-                                                class="semi_waiting_amount form-input mt-1 block w-full"
-                                                value="{{ isset($waitingAmount[$driverIndex]) ? $waitingAmount[$driverIndex] : 0 }}"
-                                                required>
-                                        </td>
+
 
                                         <td class="border p-4">
                                             @if (Auth::user()->type == 0)
-                                                <input type="text" style="width: 100px;"
-                                                    name="semi_border_charges[]" onchange="recalculateTotal()"
+                                                <input type="text" style="width: 100px;" name="semi_border_charges[]"
+                                                    onchange="recalculateTotal()"
                                                     class="semi_border_charges form-input mt-1 block w-full"
                                                     value="{{ isset($borderCharges[$driverIndex]) ? $borderCharges[$driverIndex] : 0 }}">
                                             @else
@@ -218,6 +213,20 @@
                                             @endif
                                         </td>
                                         <td class="border p-4">
+                                            <input type="text" style="width: 100px;" name="semi_waiting_amount[]"
+                                                onchange="recalculateTotal()"
+                                                class="semi_waiting_amount form-input mt-1 block w-full"
+                                                value="{{ isset($waitingAmount[$driverIndex]) ? $waitingAmount[$driverIndex] : 0 }}"
+                                                required>
+                                        </td>
+                                        <td colspan="" class="border p-4">
+                                            <input type="number" style="width: 7rem;" onchange="recalculateTotal()"
+                                                name="semi_total_booking_amount[]"
+                                                class="semi_total_booking_amount form-input mt-1 block w-full"
+                                                value="{{ isset($totalBookingAmounts[$driverIndex]) ? $totalBookingAmounts[$driverIndex] : 0 }}"
+                                                required readonly>
+                                        </td>
+                                        <td class="border p-4">
                                             {{ $paid_amount[$driverIndex] ?? 0 }}
                                         </td>
                                         <td class="border p-4">
@@ -225,13 +234,6 @@
                                         </td>
 
 
-                                        <td colspan="2" class="border p-4">
-                                            <input type="number" style="width: 7rem;" onchange="recalculateTotal()"
-                                                name="semi_total_booking_amount[]"
-                                                class="semi_total_booking_amount form-input mt-1 block w-full"
-                                                value="{{ isset($totalBookingAmounts[$driverIndex]) ? $totalBookingAmounts[$driverIndex] : 0 }}"
-                                                required readonly>
-                                        </td>
                                     </tr>
                                 @endif
                             @endforeach
@@ -239,17 +241,41 @@
                     </tbody>
                 </table>
             </div>
-            <div class="overflow-x-auto hidden" id="borderChargesTable">
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="border p-4">Border Name</th>
-                            <th class="border p-4">Border Charges</th>
-                        </tr>
-                    </thead>
-                    <tbody id="borderChargesData">
-                    </tbody>
-                </table>
+            <div class="overflow-x-auto grid grid-cols-2 gap-4 hidden" id="borderChargesTable">
+                <div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="border p-4">Border Name</th>
+                                <th class="border p-4">Border Charges</th>
+                            </tr>
+                        </thead>
+                        <tbody id="borderChargesData">
+                        </tbody>
+                    </table>
+                </div>
+                <div class=" p-6 rounded-lg shadow-lg">
+                    <div class="mb-4">
+                        <h2 class="text-xl font-semibold text-gray-800">Origin City:</h2>
+                        <p class="text-lg text-gray-600 mt-2">
+                            <?php
+                            $origin_city_data = $booking->getCityDetail($booking->origin_city) ?? 'N/A';
+                            $origin_country = $booking->getCountryByCity($origin_city_data->country_id) ?? 'N/A';
+                            ?>
+                            {{ $origin_city_data->city_name . '(' . $origin_country->name . ')' }}
+                        </p>
+                    </div>
+                    <div class="mb-4">
+                        <?php
+                        $destination_city_data = $booking->getCityDetail($booking->destination_city) ?? 'N/A';
+                        $destination_country = $booking->getCountryByCity($destination_city_data->country_id) ?? 'N/A';
+                        ?>
+                        <h2 class="text-xl font-semibold text-gray-800">Destination City:</h2>
+                        <p class="text-lg text-gray-600 mt-2">
+                            {{ $destination_city_data->city_name . '(' . $destination_country->name . ')' }}
+                        </p>
+                    </div>
+                </div>
             </div>
             <div class="grid grid-cols-3 gap-4">
                 <div class="mb-4">

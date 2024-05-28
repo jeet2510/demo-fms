@@ -79,8 +79,8 @@
                 <thead>
                     <tr>
                         <th>S.No</th>
-                        <th>Origin City</th>
-                        <th>Destination City</th>
+                        <th>Origin Country</th>
+                        <th>Destination Country</th>
                         <th>Border</th>
                         <th>Route</th>
                         <th>Fare</th>
@@ -92,8 +92,8 @@
                     @foreach ($routes as $index => $route)
                         <tr class="border-b">
                             <td class="p-2">{{ $index + 1 }}</td>
-                            <td class="p-2">{{ optional($route->originCity)->city_name }}</td>
-                            <td class="p-2">{{ optional($route->destinationCity)->city_name }}</td>
+                            <td class="p-2">{{ optional($route->originCountry)->name }}</td>
+                            <td class="p-2">{{ optional($route->destinationCountry)->name }}</td>
                             <td class="p-2">
 
                                 @foreach ($borders as $b)
