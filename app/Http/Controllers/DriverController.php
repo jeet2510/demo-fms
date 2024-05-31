@@ -33,7 +33,7 @@ class DriverController extends Controller
         // Define validation rules
         $rules = [
             'driver_name' => 'required|string|unique:drivers,driver_name',
-            'email' => 'required|email',
+            'email' => '',
             'phone_number' => 'required|string',
             'whatsapp_number' => 'nullable|string',
             'address_1' => '',
@@ -89,10 +89,18 @@ class DriverController extends Controller
         $request->file('truck_document')->move(public_path('uploads'), $truckDocumentName);
         $truckDocumentPath = 'uploads/' . $truckDocumentName;
     }
+
+    if ($request->hasFile('driver_all_documents')) {
+        $driveAllDocExtension = $request->file('driver_all_documents')->getClientOriginalExtension();
+        $driverAllDocName = 'driver_all_documents_' . Str::random(10) . '_' . time() . '.' . $driveAllDocExtension;
+        $request->file('driver_all_documents')->move(public_path('uploads'), $driverAllDocName);
+        $driverAllDocumentPath = 'uploads/' . $driverAllDocName;
+    }
     $passportPath = $passportPath ?? '';
     $idCardPath = $idCardPath ?? '';
     $drivingLicensePath = $drivingLicensePath ?? '';
     $truckDocumentPath = $truckDocumentPath ?? '';
+    $driverAllDocumentPath = $driverAllDocumentPath  ?? '';
 
 
 
@@ -120,6 +128,7 @@ class DriverController extends Controller
         $driver->id_card = $idCardPath;
         $driver->driving_license = $drivingLicensePath;
         $driver->truck_document = $truckDocumentPath;
+        $driver->all_documents = $driverAllDocumentPath;
 
         $driver->created_by = Auth::user()->creatorId();
 
@@ -139,7 +148,7 @@ class DriverController extends Controller
 
         $rules = [
             'driver_name' => 'required|string|unique:drivers,driver_name,' . $id,
-            'email' => 'email',
+            'email' => '',
             'phone_number' => 'string',
             'whatsapp_number' => 'nullable|string',
             'address_1' => '',
@@ -196,6 +205,13 @@ class DriverController extends Controller
             $request->file('truck_document')->move(public_path('uploads'), $truckDocumentName);
             $truckDocumentPath = 'uploads/' . $truckDocumentName;
         }
+        if ($request->hasFile('all_documents')) {
+            $driveAllDocExtension = $request->file('all_documents')->getClientOriginalExtension();
+            $driverAllDocName = 'driver_all_documents_' . Str::random(10) . '_' . time() . '.' . $driveAllDocExtension;
+            $request->file('all_documents')->move(public_path('uploads'), $driverAllDocName);
+            $driverAllDocumentPath = 'uploads/' . $driverAllDocName;
+        }
+
         // Update driver information
         $driver->driver_name = $request->input('driver_name');
         $driver->email = $request->input('email');
@@ -230,6 +246,10 @@ class DriverController extends Controller
         if(isset($truckDocumentPath))
         {
             $driver->truck_document = $truckDocumentPath;
+        }
+        if(isset($driverAllDocumentPath))
+        {
+            $driver->all_documents = $driverAllDocumentPath;
         }
 
         $driver->save();

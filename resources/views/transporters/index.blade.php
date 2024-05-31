@@ -93,8 +93,8 @@
                         <tr>
                             <td class="p-2">{{ $index + 1 }}</td>
                             <td class="p-2">{{ $transporter->transporter_name }}</td>
-                            <td class="p-2">{{ $transporter->contact_person }}</td>
-                            <td class="p-2">{{ $transporter->phone }}</td>
+                            <td class="p-2">{{ $transporter->contact_person ?? 'N/A' }}</td>
+                            <td class="p-2">{{ $transporter->phone ?? 'N/A' }}</td>
                             <td class="p-2">{{ $transporter->address ?? 'N/A' }}</td>
                             <td class="p-2">
                                 <a href="{{ route('transporters.edit', $transporter->id) }}" class="btn btn-primary"

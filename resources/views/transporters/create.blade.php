@@ -7,15 +7,15 @@
         </div>
         <div>
             <label for="contact_person" class="block mb-2">Contact Person</label>
-            <input type="text" name="contact_person" id="contact_person" class="form-input" required>
+            <input type="text" name="contact_person" id="contact_person" class="form-input">
         </div>
         <div>
             <label for="email" class="block mb-2">Email</label>
-            <input type="email" name="email" id="email" class="form-input" required>
+            <input type="email" name="email" id="email" class="form-input">
         </div>
         <div>
             <label for="phone" class="block mb-2">Phone</label>
-            <input type="text" name="phone" id="phone" class="form-input" required>
+            <input type="text" name="phone" id="phone" class="form-input">
         </div>
     </div>
     <div class="mb-4">

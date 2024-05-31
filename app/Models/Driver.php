@@ -18,6 +18,7 @@ class Driver extends Model
         'country',
         'state',
         'city',
+        'all_documents',
         'truck_type_id',
         'truck_number',
         'truck_expiry_date',

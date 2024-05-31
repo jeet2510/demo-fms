@@ -29,9 +29,9 @@ class TransporterController extends Controller
         // Validate incoming request
         $request->validate([
             'transporter_name' => 'required|string|unique:transporters,transporter_name',
-            'contact_person' => 'required',
-            'email' => 'required|email',
-            'phone' => 'required',
+            'contact_person' => '',
+            'email' => '',
+            'phone' => '',
             'tax_register_number' => '',
             'address' => '',
             'city' => '',
@@ -71,9 +71,9 @@ class TransporterController extends Controller
         // Validate the incoming request data
         $validatedData = $request->validate([
             'transporter_name' => ['required', 'string', Rule::unique('transporters')->ignore($transporter->id)],
-            'contact_person' => 'required|string',
-            'email' => 'required|email',
-            'phone' => 'required|string',
+            'contact_person' => '',
+            'email' => '',
+            'phone' => '',
             'tax_register_number' => '',
             'address' => '',
             'city' => '',

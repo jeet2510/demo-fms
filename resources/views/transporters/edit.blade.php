@@ -28,7 +28,7 @@
                     <div>
                         <label for="contact_person">Contact Person</label>
                         <input type="text" name="contact_person" id="contact_person" class="form-input"
-                            value="{{ $transporter->contact_person }}" required placeholder="Enter contact person">
+                            value="{{ $transporter->contact_person }}" placeholder="Enter contact person">
                     </div>
                 </div>
 
@@ -36,12 +36,12 @@
                     <div>
                         <label for="email">Email</label>
                         <input type="email" name="email" id="email" class="form-input"
-                            value="{{ $transporter->email }}" required placeholder="Enter email">
+                            value="{{ $transporter->email }}" placeholder="Enter email">
                     </div>
                     <div>
                         <label for="phone">Phone</label>
                         <input type="text" name="phone" id="phone" class="form-input"
-                            value="{{ $transporter->phone }}" required placeholder="Enter phone number">
+                            value="{{ $transporter->phone }}" placeholder="Enter phone number">
                     </div>
                 </div>
             </fieldset>

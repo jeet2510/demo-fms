@@ -101,8 +101,8 @@
                 <input type="file" class="form-input" id="driving_license" name="driving_license">
                 @if ($driver->driving_license)
                     <div>
-                        <a href="{{ asset('public/'.$driver->driving_license) }}" download class="btn btn-primary"
-                            style="max-width: 80px;">Download</a>
+                        <a href="{{ asset('public/' . $driver->driving_license) }}" download class="btn btn-primary"
+                            style="max-width: 80px; margin-top: 10px;">Download</a>
                     </div>
                 @endif
             </div><br>
@@ -145,9 +145,9 @@
                     <input type="file" class="form-input" id="truck_document" name="truck_document">
                     @if ($driver->truck_document)
                         <div>
-                            
-                            <a href="{{ asset('public/'.$driver->truck_document) }}" download class="btn btn-primary"
-                                style="max-width: 80px;">Download</a>
+
+                            <a href="{{ asset('public/' . $driver->truck_document) }}" download
+                                class="btn btn-primary" style="max-width: 80px; margin-top: 10px;">Download</a>
                         </div>
                     @endif
                 </div>
@@ -176,9 +176,9 @@
                 <input type="file" class="form-input" id="id_card" name="id_card">
                 @if ($driver->id_card)
                     <div>
-                        
-                        <a href="{{ asset('public/'.$driver->id_card) }}" download class="btn btn-primary"
-                            style="max-width: 80px;">Download</a>
+
+                        <a href="{{ asset('public/' . $driver->id_card) }}" download class="btn btn-primary"
+                            style="max-width: 80px; margin-top: 10px;">Download</a>
                     </div>
                 @endif
             </div><br>
@@ -206,8 +206,23 @@
                 <input type="file" class="form-input" id="passport" name="passport">
                 @if ($driver->passport)
                     <div>
-                        
-                        <a href="{{ asset('public/'.$driver->passport) }}" download class="btn btn-primary"
+
+                        <a href="{{ asset('public/' . $driver->passport) }}" download class="btn btn-primary"
+                            style="max-width: 80px; margin-top: 10px;">Download</a>
+                    </div>
+                @endif
+            </div>
+
+            <h1 style="font-size: large;">Drivers All Document</h1>
+
+            <div>
+                <label for="all_documents">Drivers's All Documents:</label>
+                <span class="grey">Do not Upload if not wanted to update</span>
+                <input type="file" class="form-input" id="all_documents" name="all_documents">
+                @if ($driver->all_documents)
+                    <div class="mt-2">
+
+                        <a href="{{ asset('public/' . $driver->all_documents) }}" download class="btn btn-primary"
                             style="max-width: 80px;">Download</a>
                     </div>
                 @endif
