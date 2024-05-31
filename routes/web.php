@@ -109,6 +109,7 @@ Route::post('/bookings', BookingController::class .'@store')->name('bookings.sto
 Route::get('/bookings/{booking}/edit', BookingController::class .'@edit')->name('bookings.edit');
 Route::put('/bookings/{booking}', BookingController::class .'@update')->name('bookings.update');
 Route::get('/booking/{booking_id}', [BookingController::class, 'show'])->name('bookings.show');
+Route::get('/check-booking-id', [BookingController::class, 'checkBookingId'])->name('check-booking-id');
 
 
 Route::delete('/bookings/{booking}', BookingController::class .'@destroy')->name('bookings.destroy');

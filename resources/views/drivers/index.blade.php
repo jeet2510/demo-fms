@@ -85,6 +85,7 @@
                         <th>S.No</th>
                         <th>Driver Name</th>
                         <th>Truck Type</th>
+                        <th>Plate No.</th>
                         <th>Phone</th>
                         <th>Whatsapp No.</th>
                         <th>Action</th>
@@ -96,6 +97,7 @@
                             <td class="p-2">{{ $index + 1 }}</td>
                             <td class="p-2">{{ $driver->driver_name }}</td>
                             <td class="p-2">{{ optional($driver->truck_type)->truck_type }}</td>
+                            <td class="p-2">{{ $driver->truck_number }}</td>
                             <td class="p-2">{{ $driver->phone_number }}</td>
                             <td class="p-2">{{ $driver->whatsapp_number }}</td>
                             <td class="p-2">

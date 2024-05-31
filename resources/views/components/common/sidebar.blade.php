@@ -462,7 +462,7 @@
                         </button>
                         <ul x-cloak x-show="activeDropdown === 'vehicle'" x-collapse class="sub-menu text-gray-500">
                             <li>
-                                <a href="/trucks">Truck</a>
+                                <a href="/trucks">Truck Type</a>
                             </li>
                             <li>
                                 <a href="/drivers">Driver</a>

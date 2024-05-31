@@ -125,9 +125,18 @@
             <div class="grid grid-cols-2 gap-4">
                 <div class="mb-4">
                     <label for="booking_id" class="block text-gray-700">Booking ID</label>
-                    <input type="text" name="booking_id" id="booking_id"
-                        value="BOOK-{{ time() }}-{{ mt_rand(100, 999) }}" class="form-select mt-1 block w-full"
-                        required readonly>
+                    <div class="flex">
+                        <div
+                            class="bg-[#eee] mt-1 flex justify-center items-center ltr:rounded-l-md rtl:rounded-r-md px-3 font-semibold border ltr:border-r-0 rtl:border-l-0 border-[#e0e6ed] dark:border-[#17263c] dark:bg-[#1b2e4b]">
+                            BOOK-
+                        </div>
+                        <input type="number" name="booking_id" id="booking_id" value=""
+                            class="form-select ltr:rounded-l-none rtl:rounded-r-none mt-1 block w-full"
+                            onchange="checkNewBookingId(this.value)" required>
+                    </div>
+                    @error('booking_id')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
@@ -187,7 +196,8 @@
                                             data-driver-id="{{ $driver->id }}"
                                             data-driver-name="{{ $driver->driver_name }}"
                                             data-driver-phone="{{ $driver->phone_number }}">
-                                            {{ $driver->driver_name }}/{{ $driver->phone_number }}
+                                            {{ $driver->driver_name }} ({{ $driver->phone_number }})
+                                            ({{ $driver->truck_number }})
                                         </div>
                                     @endforeach
                                 </div>
@@ -196,7 +206,8 @@
                                 style="display: none;">
                                 @foreach ($drivers as $driver)
                                     <option value="{{ $driver->id }}">
-                                        {{ $driver->driver_name }}/{{ $driver->phone_number }}</option>
+                                        {{ $driver->driver_name }} ({{ $driver->phone_number }})
+                                        ({{ $driver->truck_number }})</option>
                                 @endforeach
                             </select>
                         </div>
@@ -361,7 +372,27 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
     <!-- <script src="{{ asset('js/custom.js') }}"></script> -->
+    <script>
+        function checkNewBookingId(bookingId) {
+            $.ajax({
+                type: 'GET',
+                url: '{{ route('check-booking-id') }}',
+                data: {
+                    booking_id: bookingId
+                },
+                success: function(response) {
 
+                    if (response.exists) {
+                        alert('Booking ID already exists! Please enter a different ID.');
+                        $('#booking_id').val('');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+    </script>
     <script>
         // Define the recalculateTotal function in the global scope
         function recalculateTotal() {

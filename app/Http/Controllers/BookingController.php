@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\View;
 use App\Models\Transaction;
+use Illuminate\Validation\Rule;
 
 class BookingController extends Controller
 {
@@ -58,6 +59,8 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
+        $new_booking_id = 'BOOK-' . $request->booking_id;
+
         $validatedData = $request->validate([
             'booking_id' => 'required|string',
             'date' => 'required|string',
@@ -75,9 +78,11 @@ class BookingController extends Controller
             'origin_city' => 'required',
             'destination_city' => 'required',
         ]);
+
+
         $seprate_border_charges = json_encode($request->seprate_border_charge ?? NULL);
         $booking = new Booking();
-        $booking->booking_id = $validatedData['booking_id'];
+        $booking->booking_id = $new_booking_id;
         $booking->date = $validatedData['date'];
         $booking->customer_id = $validatedData['customer_id'];
          $booking->transporter_id = json_encode($validatedData['transporter_id']);
@@ -108,6 +113,16 @@ class BookingController extends Controller
         return redirect()->route('bookings.index')->with('success', 'Booking created successfully.');
     }
 
+    public function checkBookingId(Request $request)
+    {
+        $bookingId = 'BOOK-'.$request->input('booking_id');
+
+        if (Booking::where('booking_id', $bookingId)->exists()) {
+            return response()->json(['exists' => true]);
+        }
+
+        return response()->json(['exists' => false]);
+    }
     public function update(Request $request, string $id)
     {
 

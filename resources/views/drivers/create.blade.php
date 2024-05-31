@@ -65,11 +65,12 @@
                     <div class="grid grid-cols-4 gap-4 mt-4">
                         <!-- Truck Fields -->
                         <div class="col-span-1">
-                            <label for="truck_number" class="block">Truck Number(Mulkiya):</label>
+                            <label for="truck_number" class="block">Plate Number(Mulkiya):</label>
                             <input type="text" id="truck_number" class="form-input" name="truck_number" required>
                         </div>
                         <div class="col-span-1">
-                            <label for="truck_type_id" class="block">Truck Type(Mulkiya):</label>
+                            {{-- <label for="truck_type_id" class="block">Truck Type(Mulkiya):</label> --}}
+                            <label for="truck_type_id" class="block">Truck Type :</label>
                             <select id="truck_type_id" class="form-input" name="truck_type_id" required>
                                 <option value="">Select Truck Type</option>
                                 @foreach ($trucks as $truck)

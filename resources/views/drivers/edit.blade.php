@@ -1,4 +1,47 @@
 <x-layout.default>
+    <style>
+        /* Header styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            /* Adjust according to your design */
+            font-weight: 600;
+        }
+
+        .download-btn {
+            max-width: 80px;
+        }
+
+        /* Document and image viewer styles */
+        .document-viewer {
+            width: 100%;
+            height: 30rem;
+            border: none;
+        }
+
+        .image-container {
+            width: 20rem;
+            height: 27rem;
+            position: relative;
+            overflow: hidden;
+            margin-left: 7rem;
+        }
+
+        .image-viewer {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
 
     <div class="container">
         @if ($errors->any())
@@ -99,12 +142,12 @@
                 <label for="driving_license">Driving License:</label>
                 <span class="grey">Do not Upload if not wanted to update</span>
                 <input type="file" class="form-input" id="driving_license" name="driving_license">
-                @if ($driver->driving_license)
+                {{-- @if ($driver->driving_license)
                     <div>
                         <a href="{{ asset('public/' . $driver->driving_license) }}" download class="btn btn-primary"
                             style="max-width: 80px; margin-top: 10px;">Download</a>
                     </div>
-                @endif
+                @endif --}}
             </div><br>
 
             <h1 style="font-size: large;">Truck Information</h1>
@@ -112,7 +155,8 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                 <div>
-                    <label for="truck_type_id">Truck Type(Mulkiya):</label>
+                    {{-- <label for="truck_type_id">Truck Type(Mulkiya):</label> --}}
+                    <label for="truck_type_id">Truck Type :</label>
                     <select id="truck_type_id" class="form-input" name="truck_type_id">
                         <option value="">Select Truck Type</option>
                         @foreach ($trucks as $truckType)
@@ -124,7 +168,7 @@
                 </div>
 
                 <div>
-                    <label for="truck_number">Truck Number(Mulkiya):</label>
+                    <label for="truck_number">Plate Number(Mulkiya):</label>
                     <input type="text" class="form-input" id="truck_number" name="truck_number"
                         value="{{ $driver->truck_number }}">
                 </div>
@@ -143,13 +187,13 @@
                     <label for="truck_document">Truck Document(Mulkiya):</label>
                     <span class="grey">Do not Upload if not wanted to update</span>
                     <input type="file" class="form-input" id="truck_document" name="truck_document">
-                    @if ($driver->truck_document)
+                    {{-- @if ($driver->truck_document)
                         <div>
 
                             <a href="{{ asset('public/' . $driver->truck_document) }}" download
                                 class="btn btn-primary" style="max-width: 80px; margin-top: 10px;">Download</a>
                         </div>
-                    @endif
+                    @endif --}}
                 </div>
             </div><br>
 
@@ -174,13 +218,13 @@
                 <label for="id_card">Emirates ID Card:</label>
                 <span class="grey">Do not Upload if not wanted to update</span>
                 <input type="file" class="form-input" id="id_card" name="id_card">
-                @if ($driver->id_card)
+                {{-- @if ($driver->id_card)
                     <div>
 
                         <a href="{{ asset('public/' . $driver->id_card) }}" download class="btn btn-primary"
                             style="max-width: 80px; margin-top: 10px;">Download</a>
                     </div>
-                @endif
+                @endif --}}
             </div><br>
 
             <h1 style="font-size: large;">Passport Information</h1>
@@ -204,13 +248,13 @@
                 <label for="passport">Passport:</label>
                 <span class="grey">Do not Upload if not wanted to update</span>
                 <input type="file" class="form-input" id="passport" name="passport">
-                @if ($driver->passport)
+                {{-- @if ($driver->passport)
                     <div>
 
                         <a href="{{ asset('public/' . $driver->passport) }}" download class="btn btn-primary"
                             style="max-width: 80px; margin-top: 10px;">Download</a>
                     </div>
-                @endif
+                @endif --}}
             </div>
 
             <h1 style="font-size: large;">Drivers All Document</h1>
@@ -219,17 +263,17 @@
                 <label for="all_documents">Drivers's All Documents:</label>
                 <span class="grey">Do not Upload if not wanted to update</span>
                 <input type="file" class="form-input" id="all_documents" name="all_documents">
-                @if ($driver->all_documents)
+                {{-- @if ($driver->all_documents)
                     <div class="mt-2">
 
                         <a href="{{ asset('public/' . $driver->all_documents) }}" download class="btn btn-primary"
                             style="max-width: 80px;">Download</a>
                     </div>
-                @endif
+                @endif --}}
             </div>
-
+            @include('drivers.view_all_doc_modal')
             <div>
-                <button type="submit" class="btn btn-primary">Update</button>
+                <button type="submit" class="btn btn-primary mt-4">Update</button>
             </div>
 
         </form>
